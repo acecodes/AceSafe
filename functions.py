@@ -1,18 +1,19 @@
-import configparser
+import json
 import os
 import filecmp
 from filecmp import dircmp
 
 """
-Set installation directory
+Set JSON configuration file and related variables
+The JSON file contains all of the directories that will be used in this script
 """
-install_dir = 'D:\\Files\\Programming\\Python\\my_projects\\PyFile\\'
 
-"""
-Set configuration parser and file
-"""
-config = configparser.ConfigParser()
-config.read(install_dir+'config.ini')
+JSONopen = open('config.json')
+JSONdata = json.load(JSONopen)
+
+Sources = JSONdata['Sources']
+Dirs = JSONdata['Dirs']
+Dropbox_Dirs = JSONdata['Dropbox Dirs']
 
 """
 Menu choice functions
@@ -24,59 +25,59 @@ Each of these functions utilizes the config file (config.ini) and loops through 
 def anki():
     anki_choice = int(input('\nPress 1 to copy only new files.\nPress 2 to delete old files and refill the directory.: '))
     if anki_choice == 1: # 'del_dst_dir' flag used to clear backup files, which would accumulate otherwise
-        for directory in config['Dirs']:
-            copy_dirs(config['Sources']['Anki'], config['Dirs'][directory], dst_sub='Flashcards\\Anki', del_dst_dir='backups')
+        for directory in Dirs:
+            copy_dirs(Sources['Anki'], Dirs[directory], dst_sub='Flashcards\\Anki', del_dst_dir='backups')
         finished()
 
     elif anki_choice == 2:
-        for directory in config['Dirs']:
-            copy_dirs(config['Sources']['Anki'], config['Dirs'][directory], dst_sub='Flashcards\\Anki', del_dst_dir='backups', fresh=True)
+        for directory in Dirs:
+            copy_dirs(Sources['Anki'], Dirs[directory], dst_sub='Flashcards\\Anki', del_dst_dir='backups', fresh=True)
         finished()
 
 def books(copy_configs=False):
     # Look for folders that do not match the home book folder and delete them
-    for directory in config['Dirs']:
-        compare_delete(config['Dirs']['Files'], config['Dirs'][directory], src_sub='Books\\Calibre')
-        copy_dirs(config['Dirs']['Files'], config['Dirs'][directory], src_sub='Books\\Calibre', dst_sub='Books\\Calibre')
+    for directory in Dirs:
+        compare_delete(Dirs['Files'], Dirs[directory], src_sub='Books\\Calibre')
+        copy_dirs(Dirs['Files'], Dirs[directory], src_sub='Books\\Calibre', dst_sub='Books\\Calibre')
     # Copy Calibre configuration files
     if copy_configs == True:
-        for directory in config['Dirs']:
-            copy_dirs(config['Sources']['Calibre Config'], config['Dirs'][directory], dst_sub='Books\\Config', fresh=True)
+        for directory in Dirs:
+            copy_dirs(Sources['Calibre Config'], Dirs[directory], dst_sub='Books\\Config', fresh=True)
     finished()
     
 def chrome():
-    for directory in config['Dirs']:
-        copy_dirs(config['Sources']['Chrome'], config['Dirs'][directory], dst_sub='Browsers\\Chrome', fresh=True)
+    for directory in Dirs:
+        copy_dirs(Sources['Chrome'], Dirs[directory], dst_sub='Browsers\\Chrome', fresh=True)
     finished()
 
 def dropbox():
     copy_warn('Dropbox')
-    for directory in config['Dropbox Dirs']:
-        copy_dirs(config['Dirs']['Files'], config['Dirs']['Dropbox'], src_sub=config['Dropbox Dirs'][directory], dst_sub=config['Dropbox Dirs'][directory])
+    for directory in Dropbox_Dirs:
+        copy_dirs(Dirs['Files'], Dirs['Dropbox'], src_sub=Dropbox_Dirs[directory], dst_sub=Dropbox_Dirs[directory])
     finished()
     
 
 def ext_HDs():
     copy_warn('your external HDs')
-    copy_dirs(config['Dirs']['Dropbox'], config['Dirs']['Files'], src_sub='Camera Uploads', dst_sub='Media\\Dropbox Photos')
-    copy_dirs(config['Dirs']['Dropbox'], config['Dirs']['Files'], src_sub='Music',  dst_sub='Music')
-    copy_dirs(config['Dirs']['Files'], config['Dirs']['External HD 1'])
-    copy_dirs(config['Dirs']['Files'], config['Dirs']['External HD 2'])
-    copy_dirs(config['Dirs']['Files'], config['Dirs']['Thumb Drive'], src_sub='Books/Calibre', dst_sub='Books\\Calibre')
-    copy_dirs(config['Dirs']['Files'], config['Dirs']['Thumb Drive'], src_sub='Documents', dst_sub='Documents')
-    copy_dirs(config['Dirs']['Files'], config['Dirs']['Thumb Drive'], src_sub='Programming', dst_sub='Programming')
+    copy_dirs(Dirs['Dropbox'], Dirs['Files'], src_sub='Camera Uploads', dst_sub='Media\\Dropbox Photos')
+    copy_dirs(Dirs['Dropbox'], Dirs['Files'], src_sub='Music',  dst_sub='Music')
+    copy_dirs(Dirs['Files'], Dirs['External HD 1'])
+    copy_dirs(Dirs['Files'], Dirs['External HD 2'])
+    copy_dirs(Dirs['Files'], Dirs['Thumb Drive'], src_sub='Books/Calibre', dst_sub='Books\\Calibre')
+    copy_dirs(Dirs['Files'], Dirs['Thumb Drive'], src_sub='Documents', dst_sub='Documents')
+    copy_dirs(Dirs['Files'], Dirs['Thumb Drive'], src_sub='Programming', dst_sub='Programming')
     finished()
 
 def server():
-    for directory in config['Dirs']:
-        copy_dirs(config['Sources']['Server'], config['Dirs'][directory], dst_sub='Documents\\Server', fresh=True)
+    for directory in Dirs:
+        copy_dirs(Sources['Server'], Dirs[directory], dst_sub='Documents\\Server', fresh=True)
     finished()
 
 def sync_apps():
-    copy_dirs(config['Dirs']['Dropbox'], config['Dirs']['Files'], dst_sub='Apps', src_sub='Apps', fresh=True)
-    copy_dirs(config['Dirs']['Dropbox'], config['Dirs']['External HD 1'], dst_sub='Apps', src_sub='Apps', fresh=True)
-    copy_dirs(config['Dirs']['Dropbox'], config['Dirs']['External HD 2'], dst_sub='Apps', src_sub='Apps', fresh=True)
-    copy_dirs(config['Dirs']['Dropbox'], config['Dirs']['Thumb Drive'], dst_sub='Apps', src_sub='Apps', fresh=True)
+    copy_dirs(Dirs['Dropbox'], Dirs['Files'], dst_sub='Apps', src_sub='Apps', fresh=True)
+    copy_dirs(Dirs['Dropbox'], Dirs['External HD 1'], dst_sub='Apps', src_sub='Apps', fresh=True)
+    copy_dirs(Dirs['Dropbox'], Dirs['External HD 2'], dst_sub='Apps', src_sub='Apps', fresh=True)
+    copy_dirs(Dirs['Dropbox'], Dirs['Thumb Drive'], dst_sub='Apps', src_sub='Apps', fresh=True)
     finished()
 
 """
@@ -154,3 +155,4 @@ def copy_warn(dst):
     print('Press any key to continue...\n')
     input()
 
+JSONopen.close()
