@@ -8,7 +8,7 @@ Set JSON configuration file and related variables
 The JSON file contains all of the directories that will be used in this script
 """
 
-JSONopen = open('config.json')
+JSONopen = open('D:\\Files\\Programming\\Python\\my_projects\\PyFile\\config.json')
 JSONdata = json.load(JSONopen)
 
 Sources = JSONdata['Sources']

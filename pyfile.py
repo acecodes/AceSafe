@@ -3,7 +3,7 @@
 
 import os
 import sys
-import functions
+import classes
 
 
 """Functions"""
@@ -27,19 +27,19 @@ def welcome(name='Brochacho Dawg'):
 # Function that executes choices from main menu
 def select(selection):
     if selection == welcome_choices.index('Copy files to external hard drives')+1:
-        functions.ext_HDs()
+        classes.MyExternals.backup()
         welcome()
     elif selection == welcome_choices.index('Copy bulk files to Dropbox')+1:
-        functions.dropbox()
+        classes.MyDropbox.backup()
         welcome()
     elif selection == welcome_choices.index('Copy Anki files')+1:
-        functions.anki()
+        classes.MyFlashcards.choice()
         welcome()
     elif selection == welcome_choices.index('Copy browser files')+1:
-        functions.chrome()
+        classes.MyBrowser.backup()
         welcome()
     elif selection == welcome_choices.index('Copy server files')+1:
-        functions.server()
+        classes.MyServer.backup()
         welcome()
     elif selection == welcome_choices.index('Sync book files')+1:
         config_choice = int(input('\nPress 2 if you would like to copy Calibre config files as well\nOtherwise, press 1: '))
@@ -49,7 +49,7 @@ def select(selection):
             functions.books(copy_configs=True)
         welcome()
     elif selection == welcome_choices.index('Sync apps')+1:
-        functions.sync_apps()
+        classes.MyApps.backup()
         welcome()
     elif selection == welcome_choices.index('Exit')+1:
         sys.exit()
