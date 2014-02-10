@@ -126,7 +126,7 @@ class Browser(DirObject):
         copy_dirs = self.copy_dirs
         copy_warn('Browser')
         for directory in Dirs:
-            copy_dirs(Dirs[directory], subs='Browsers\\Chrome', Fresh=True)
+            copy_dirs(Dirs[directory], dst_sub='Browsers\\Chrome', Fresh=True)
         self.finished()
 
 class Server(DirObject):
