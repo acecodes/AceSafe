@@ -33,20 +33,13 @@ def select(selection):
         classes.MyDropbox.backup()
         welcome()
     elif selection == welcome_choices.index('Copy Anki files')+1:
-        classes.MyFlashcards.choice()
+        classes.MyFlashcards.backup()
         welcome()
     elif selection == welcome_choices.index('Copy browser files')+1:
         classes.MyBrowser.backup()
         welcome()
     elif selection == welcome_choices.index('Copy server files')+1:
         classes.MyServer.backup()
-        welcome()
-    elif selection == welcome_choices.index('Sync book files')+1:
-        config_choice = int(input('\nPress 2 if you would like to copy Calibre config files as well\nOtherwise, press 1: '))
-        if config_choice == 1:
-            functions.books()
-        elif config_choice == 2:
-            functions.books(copy_configs=True)
         welcome()
     elif selection == welcome_choices.index('Sync apps')+1:
         classes.MyApps.backup()
@@ -60,7 +53,6 @@ welcome_choices = ['Copy files to external hard drives',
            'Copy Anki files',
            'Copy browser files',
            'Copy server files',
-           'Sync book files',
            'Sync apps',
            'Exit']
 

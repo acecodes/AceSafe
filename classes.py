@@ -1,6 +1,7 @@
 import os
 import json
-from filecmp import dircmp
+import filecmp
+import shutil
 
 ##
 ## Tasks:
@@ -14,7 +15,7 @@ Set JSON configuration file and related variables.
 The JSON file contains all of the directories that will be used in this script.
 """
 
-JSONopen = open('config.json')
+JSONopen = open('D:\\Files\\Programming\\Python\\my_projects\\PyFile\\config.json')
 JSONdata = json.load(JSONopen)
 
 Sources = JSONdata['Sources']
@@ -36,47 +37,43 @@ class DirObject:
 
     def __str__(self):
         return 'This object\'s home directory is: %s' % (self.src)
-            
-        
-    # Function for copying from one directory to another. Utilizes batch commands for simplification.
-    def copy_dirs(self, dst, src='', subs='', dst_sub='', del_dst_dir='', Fresh=False):
-        if src == '':
+
+    # Searches for and deletes files not found in the source, then copies any new files
+    # A big thank you goes out to Pi Marillion (on StackOverflow) for helping me work out the mechanics of this method
+    def copy_dirs(self, dst, src='', subs='', dst_sub=''):
+        if not src:
             src = self.src
-        if subs != '':
-            src = src + '\\' + subs
-            dst = dst + '\\' + subs
-        if dst_sub != '':
-            dst = dst + '\\' + dst_sub
-        print('Source: %s' % src)
-        print('Destination: %s' % dst)
-        if del_dst_dir != '':
-            os.system("""rmdir "{0}" /S /Q """.format(dst + '\\' + del_dst_dir))
-        if Fresh == False:
-            os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
-        elif Fresh == True:
-            os.system("""rmdir "{0}" /S /Q """.format(dst))
-            os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
-            
-    # Function for comparing two directories, which can be utilized with compare_delete to get rid of extra folders in a destination
-    def dir_compare(self, dst, return_src=False):
-        src = self.src
-        comparison1 = dircmp(src, dst)
-        if return_src == False:
-            return comparison1.right_only
-        elif return_src == True:
-            return comparison1.left_only
+        if subs:
+            src = os.path.join(src, subs)
+            dst = os.path.join(dst, subs)
+        if dst_sub:
+            dst = os.path.join(dst, dst_sub)
+        print('\nSource: %s' % src)
+        print('Destination: %s\n' % dst)
+        for src_root, src_dirs, src_files in os.walk(src, topdown=True):
+            dst_root = os.path.join(dst, os.path.relpath(src_root, src))
+            dirs = filecmp.dircmp(src_root, dst_root)
+            # Find old files and delete them from destination
+            for item in dirs.right_only:
+                print('Removing ' + item)
+                dst_path = os.path.join(dst_root, item)
+                if os.path.isdir(dst_path):
+                    shutil.rmtree(dst_path)
+                else:
+                    os.remove(dst_path)
+            # Find new files and add them to destination
+            for item in dirs.left_only:
+                print('Adding ' + item)
+                src_path = os.path.join(src_root, item)
+                if os.path.isdir(src_path):
+                    shutil.copytree(src_path, os.path.join(dst_root, item))
+                else:
+                    shutil.copy2(src_path, os.path.join(dst_root, item))
+        # Once clearing and adding has completed, update existing files
+        print('Updating: ')
+        os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
         
-    # Deletes directories that do not exist in a source directory
-    def compare_delete(self, dst, src_sub='', dst_sub=''):
-        src = self.src
-        if src_sub != '':
-            src = src + '\\' + src_sub
-        if dst_sub != '':
-            dst = dst + '\\' + dst_sub
-        folder_differences = self.dir_compare(dst)
-        for folders in folder_differences:
-            os.system("""rmdir "{0}" /S /Q""".format(dst + '\\' + folders))
-            #map(os.system("""rmdir "{0}" /S /Q""".format(dst + '\\' + folders)), folder_differences)
+
             
     # Message confirming end of copy activity
     def finished(self):
@@ -88,6 +85,10 @@ class DirObject:
         print('\n%s files are about to be copied..' % dst)
         print('Press any key to continue...\n')
         input()
+
+class Testing(DirObject):
+    def __init__(self):
+        DirObject.__init__(self, 'C:\\Temp\\1')
 
 
 class Dropbox(DirObject):
@@ -126,7 +127,7 @@ class Browser(DirObject):
         copy_dirs = self.copy_dirs
         copy_warn('Browser')
         for directory in Dirs:
-            copy_dirs(Dirs[directory], dst_sub='Browsers\\Chrome', Fresh=True)
+            copy_dirs(Dirs[directory], dst_sub='Browsers\\Chrome')
         self.finished()
 
 class Server(DirObject):
@@ -138,7 +139,7 @@ class Server(DirObject):
         copy_dirs = self.copy_dirs
         copy_warn('Server')
         for directory in Dirs:
-            copy_dirs(Dirs[directory], subs='Documents\\Server', Fresh=True)
+            copy_dirs(Dirs[directory], dst_sub='Documents\\Server')
         self.finished()
             
 class Apps(DirObject):
@@ -150,46 +151,20 @@ class Apps(DirObject):
         copy_dirs = self.copy_dirs
         copy_warn('Apps')
         for directory in Dirs:
-            copy_dirs(Dirs[directory], dst_sub='Apps', Fresh=True)
+            copy_dirs(Dirs[directory], dst_sub='Apps')
         self.finished()
-
-class Books(DirObject):
-    def __init__(self):
-        DirObject.__init__(self, Sources['Books'])
-
-    def refresh(self, copy_configs=False):
-        copy_dirs = self.copy_dirs
-        compare_delete = self.compare_delete
-        # Look for folders that do not match the home book folder, delete them and then replace with any new folders
-        for directory in Dirs:
-            compare_delete(Dirs[directory], dst_sub='Books\\Calibre')
-            copy_dirs(Dirs[directory], dst_sub='Books\\Calibre')
-        # Copy Calibre configuration files
-        if copy_configs == True:
-            for directory in Dirs:
-                copy_dirs(Dirs[directory], src=Sources['Calibre Config'], dst_sub='Books\\Config', fresh=True)
 
 class Flashcards(DirObject):
     def __init__(self):
         DirObject.__init__(self, Sources['Anki'])
 
-    def choice(self):
-        number = int(input('Press 1 to copy only new files.\nPress 2 to refresh folders (delete all, then copy files): '))
-        if number == 1:
-            self.backup(new=False)
-        elif number == 2:
-            self.backup(new=True)
-
-    def backup(self, new=False):
+    def backup(self):
         copy_warn = self.copy_warn
         copy_dirs = self.copy_dirs
         copy_warn('Anki')
-        if new == False:
-            for directory in Dirs:
-                copy_dirs(Dirs[directory], dst_sub='Flashcards\\Anki', del_dst_dir='backups')
-        elif new == True:
-            for directory in Dirs:
-                copy_dirs(Dirs[directory], dst_sub='Flashcards\\Anki', del_dst_dir='backups', Fresh=True)
+        for directory in Dirs:
+            copy_dirs(Dirs[directory], dst_sub='Flashcards\\Anki')
+        copy_dirs('D:\\AceAnkiDeck')
         self.finished()
 
 """
@@ -200,12 +175,9 @@ MyBrowser = Browser()
 MyServer = Server()
 MyApps = Apps()
 MyExternals = ExternalHDs()
-MyBooks = Books()
 MyDropbox = Dropbox()
-
+Test = Testing()
 
 
 
 JSONopen.close()
-
-
