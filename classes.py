@@ -198,15 +198,16 @@ class Flashcards(DirObject):
         DirObject.__init__(self, Sources['Anki'])
 
     def backup(self):
+        # Send Anki CSS file to GitHub repository directory
         copy_warn = self.copy_warn
         copy_dirs = self.copy_dirs
         copy_warn('Anki')
+        print('\nCopying CSS file to GitHub repository...\n')
+        os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(self.src + '\\' + 'collection.media\\_CSS-Master.css', 'D:\\Files\\Programming\\CSS\\AnkiCSS'))
         for directory in Dirs:
             copy_dirs(Dirs[directory], dst_sub='Flashcards\\Anki')
-        # Zip contents and send to GitHub folder
-        print('\nCompressing Anki directory and sending it to the GitHub folder...\n')
-        self.compress('D:\\AceAnkiDeck\\AceAnkiDeck.zip')
         self.finished()
+
 
 """
 Instances
@@ -221,6 +222,3 @@ Test = Testing()
 
 
 JSONopen.close()
-
-if __name__ == '__main__':
-	MyFlashcards.compress('D:\\AceAnkiDeck\\AceAnkiDeck.zip')
