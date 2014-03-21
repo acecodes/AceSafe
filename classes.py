@@ -2,6 +2,8 @@ import os
 import json
 import filecmp
 import shutil
+import zipfile
+import sys
 
 ##
 ## Tasks:
@@ -38,9 +40,10 @@ class DirObject:
     def __str__(self):
         return 'This object\'s home directory is: %s' % (self.src)
 
-    # Searches for and deletes files not found in the source, then copies any new files
     # A big thank you goes out to Pi Marillion (on StackOverflow) for helping me work out the mechanics of this method
     def copy_dirs(self, dst, src='', subs='', dst_sub=''):
+        """Searches for and deletes files not found in the source, then copies any new files to the destination
+        """
         if not src:
             src = self.src
         if subs:
@@ -70,8 +73,40 @@ class DirObject:
                 else:
                     shutil.copy2(src_path, os.path.join(dst_root, item))
         # Once clearing and adding has completed, update existing files
-        print('Updating: ')
+        print('\nUpdating: ')
         os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
+
+    def compress(self, dst):
+    	"""Zip everything in a folder (including subfolders).
+    	"""
+    	src = self.src
+    	parent = os.path.dirname(src)
+    	# Walk through the source directory
+    	contents = os.walk(src)
+    	try:
+    		zipper = zipfile.ZipFile(dst, 'w', zipfile.ZIP_DEFLATED)
+    		for root, folders, files in contents:
+    			# Ensure that subs are included
+    			for folder_name in folders:
+    				absolute_path = os.path.join(root, folder_name)
+    				relative_path = absolute_path.replace(parent + '\\', '')
+    				print('Adding contents of %s to %s...' % (absolute_path, dst))
+    			for file_name in files:
+    				absolute_path = os.path.join(root, file_name)
+    				relative_path = absolute_path.replace(parent + '\\', '')
+    				zipper.write(absolute_path, relative_path)
+    		print('%s created successfully.' % dst)
+    	except IOError:
+    		print(message)
+    		sys.exit(1)
+    	except OSError:
+    		print(message)
+    		sys.exit(1)
+    	except zipfile.BadZipFile:
+    		print(message)
+    		sys.exit(1)
+    	finally:
+    		zipper.close()
         
 
             
@@ -85,6 +120,10 @@ class DirObject:
         print('\n%s files are about to be copied..' % dst)
         print('Press any key to continue...\n')
         input()
+
+"""
+Directory Objects
+"""
 
 class Testing(DirObject):
     def __init__(self):
@@ -164,7 +203,9 @@ class Flashcards(DirObject):
         copy_warn('Anki')
         for directory in Dirs:
             copy_dirs(Dirs[directory], dst_sub='Flashcards\\Anki')
-        copy_dirs('D:\\AceAnkiDeck')
+        # Zip contents and send to GitHub folder
+        print('\nCompressing Anki directory and sending it to the GitHub folder...\n')
+        self.compress('D:\\AceAnkiDeck\\AceAnkiDeck.zip')
         self.finished()
 
 """
@@ -179,5 +220,7 @@ MyDropbox = Dropbox()
 Test = Testing()
 
 
-
 JSONopen.close()
+
+if __name__ == '__main__':
+	MyFlashcards.compress('D:\\AceAnkiDeck\\AceAnkiDeck.zip')
