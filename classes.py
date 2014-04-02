@@ -40,6 +40,9 @@ class DirObject:
     def __str__(self):
         return 'This object\'s home directory is: %s' % (self.src)
 
+    def __dict__(self):
+        return dict({self.name:self.dst})
+
     # A big thank you goes out to Pi Marillion (on StackOverflow) for helping me work out the mechanics of this method
     def copy_dirs(self, dst, src='', subs='', dst_sub=''):
         """Searches for and deletes files not found in the source, then copies any new files to the destination
@@ -97,13 +100,10 @@ class DirObject:
     				zipper.write(absolute_path, relative_path)
     		print('%s created successfully.' % dst)
     	except IOError:
-    		print(message)
     		sys.exit(1)
     	except OSError:
-    		print(message)
     		sys.exit(1)
     	except zipfile.BadZipFile:
-    		print(message)
     		sys.exit(1)
     	finally:
     		zipper.close()
