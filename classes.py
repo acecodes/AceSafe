@@ -61,7 +61,10 @@ class DirObject:
             dirs = filecmp.dircmp(src_root, dst_root)
             # Find old files and delete them from destination
             for item in dirs.right_only:
-                print('Removing ' + item)
+                try:
+                    print('Removing ' + item)
+                except:
+                    print('Removing file (Unicode error)') # Prevents the program from stopping in the event of an awkward file name
                 dst_path = os.path.join(dst_root, item)
                 if os.path.isdir(dst_path):
                     shutil.rmtree(dst_path)
@@ -69,7 +72,10 @@ class DirObject:
                     os.remove(dst_path)
             # Find new files and add them to destination
             for item in dirs.left_only:
-                print('Adding ' + item)
+                try:
+                    print('Adding ' + item)
+                except:
+                    print('Adding file (Unicode error)') # Prevents the program from stopping in the event of an awkward file name
                 src_path = os.path.join(src_root, item)
                 if os.path.isdir(src_path):
                     shutil.copytree(src_path, os.path.join(dst_root, item))
