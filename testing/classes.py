@@ -4,6 +4,7 @@ import filecmp
 import shutil
 import zipfile
 import sys
+import sqlite3
 
 ##
 ## Tasks:
@@ -35,8 +36,10 @@ class DirObject:
     The argument 'src' represents that location and is required for all instances.
     """
     
-    def __init__(self, src):
+    def __init__(self, name, src):
+        self.name = name
         self.src = src
+        self.db_source_insert()
 
     def __str__(self):
         return 'This object\'s home directory is: %s' % (self.src)
@@ -94,33 +97,33 @@ class DirObject:
         self.finished
 
     def compress(self, dst):
-    	"""Zip everything in a folder (including subfolders).
-    	"""
-    	src = self.src
-    	parent = os.path.dirname(src)
-    	# Walk through the source directory
-    	contents = os.walk(src)
-    	try:
-    		zipper = zipfile.ZipFile(dst, 'w', zipfile.ZIP_DEFLATED)
-    		for root, folders, files in contents:
-    			# Ensure that subs are included
-    			for folder_name in folders:
-    				absolute_path = os.path.join(root, folder_name)
-    				relative_path = absolute_path.replace(parent + '\\', '')
-    				print('Adding contents of %s to %s...' % (absolute_path, dst))
-    			for file_name in files:
-    				absolute_path = os.path.join(root, file_name)
-    				relative_path = absolute_path.replace(parent + '\\', '')
-    				zipper.write(absolute_path, relative_path)
-    		print('%s created successfully.' % dst)
-    	except IOError:
-    		sys.exit(1)
-    	except OSError:
-    		sys.exit(1)
-    	except zipfile.BadZipFile:
-    		sys.exit(1)
-    	finally:
-    		zipper.close()
+        """Zip everything in a folder (including subfolders).
+        """
+        src = self.src
+        parent = os.path.dirname(src)
+        # Walk through the source directory
+        contents = os.walk(src)
+        try:
+            zipper = zipfile.ZipFile(dst, 'w', zipfile.ZIP_DEFLATED)
+            for root, folders, files in contents:
+                # Ensure that subs are included
+                for folder_name in folders:
+                    absolute_path = os.path.join(root, folder_name)
+                    relative_path = absolute_path.replace(parent + '\\', '')
+                    print('Adding contents of %s to %s...' % (absolute_path, dst))
+                for file_name in files:
+                    absolute_path = os.path.join(root, file_name)
+                    relative_path = absolute_path.replace(parent + '\\', '')
+                    zipper.write(absolute_path, relative_path)
+            print('%s created successfully.' % dst)
+        except IOError:
+            sys.exit(1)
+        except OSError:
+            sys.exit(1)
+        except zipfile.BadZipFile:
+            sys.exit(1)
+        finally:
+            zipper.close()
         
 
             
@@ -135,6 +138,53 @@ class DirObject:
         print('Press any key to continue...\n')
         input()
 
+    def db_source_insert(self, table=''):
+        conn = sqlite3.connect('settings.db', isolation_level=None)
+        cursor = conn.cursor()
+        info = (self.name, self.src)
+
+        result = cursor.fetchall()
+
+        if table == '':
+            table = 'Sources'
+
+        try:
+            # Create table if it doesn't exist
+            cursor.execute('''CREATE TABLE {0} (Name text PRIMARY KEY, Location text)'''.format(table))
+            print('Table does not exist, creating one...')
+        except:
+            pass
+
+        try:
+            # Insert name and location into database
+            cursor.execute('''INSERT INTO {0} VALUES (?, ?)'''.format(table), info)
+        except sqlite3.IntegrityError:
+            print('The unique key "{0}" already exists, moving on...'.format(self.name))
+            pass
+            
+
+        conn.commit()    
+        cursor.close()
+        conn.close()
+
+    def db_update(self, location, table=''):
+        conn = sqlite3.connect('settings.db', isolation_level=None)
+        cursor = conn.cursor()
+
+        print('Updating database with new object location for {0}...'.format(self.name))
+
+        self.src = location
+
+        if table == '':
+            table = 'Sources'
+
+        cursor.execute('''UPDATE {0} SET Location = ? WHERE Name = ?'''.format(table), (location, self.name))
+
+        print('Database updated, {0} new location is: {1}'.format(self.name, self.src))
+
+        conn.commit()    
+        cursor.close()
+        conn.close()
 """
 Object factory
 """
@@ -149,12 +199,12 @@ Directory Objects
 
 class Testing(DirObject):
     def __init__(self):
-        DirObject.__init__(self, 'C:\\Temp\\1')
+        DirObject.__init__(self, 'Testing', 'C:\\Temp\\1')
 
 
 class Dropbox(DirObject):
     def __init__(self):
-        DirObject.__init__(self, Dirs['Dropbox'])
+        DirObject.__init__(self, 'Dropbox', Dirs['Dropbox'])
         
     def backup(self):
         copy_warn = self.copy_warn
@@ -164,15 +214,45 @@ class Dropbox(DirObject):
             copy_dirs(Dirs['Dropbox'], src=Dirs['Files'], subs=Dropbox_Dirs[directory])
         self.finished()
 
-class ExternalHDs(DirObject):
+class ExternalHD1(DirObject):
     def __init__(self):
-        DirObject.__init__(self, Dirs['Files'])
+        DirObject.__init__(self, 'ExternalHD1', 'G:\\')
 
     def backup(self):
         copy_warn = self.copy_warn
         copy_dirs = self.copy_dirs
-        copy_warn('External backups')
+        copy_warn('External HD 1')
         copy_dirs(Dirs['External HD 1'])
+        copy_dirs(Dirs['External HD 2'])
+        copy_dirs(Dirs['Thumb Drive'], subs='Books\\Calibre')
+        copy_dirs(Dirs['Thumb Drive'], subs='Documents')
+        copy_dirs(Dirs['Thumb Drive'], subs='Programming')
+        self.finished()
+
+class ExternalHD2(DirObject):
+    def __init__(self):
+        DirObject.__init__(self, 'ExternalHD2', 'H:\\')
+
+    def backup(self):
+        copy_warn = self.copy_warn
+        copy_dirs = self.copy_dirs
+        copy_warn('External HD 2')
+        copy_dirs(Dirs['External HD 1'])
+        copy_dirs(Dirs['External HD 2'])
+        copy_dirs(Dirs['Thumb Drive'], subs='Books\\Calibre')
+        copy_dirs(Dirs['Thumb Drive'], subs='Documents')
+        copy_dirs(Dirs['Thumb Drive'], subs='Programming')
+        self.finished()
+
+class Thumb(DirObject):
+    def __init__(self):
+        DirObject.__init__(self, 'Thumb', 'F:\\')
+
+    def backup(self):
+        copy_warn = self.copy_warn
+        copy_dirs = self.copy_dirs
+        copy_warn('Thumb drive')
+        copy_dirs(src=self.src)
         copy_dirs(Dirs['External HD 2'])
         copy_dirs(Dirs['Thumb Drive'], subs='Books\\Calibre')
         copy_dirs(Dirs['Thumb Drive'], subs='Documents')
@@ -181,7 +261,7 @@ class ExternalHDs(DirObject):
 
 class Browser(DirObject):
     def __init__(self):
-        DirObject.__init__(self, Sources['Chrome'])
+        DirObject.__init__(self, 'Browser', Sources['Chrome'])
 
     def backup(self):
         copy_warn = self.copy_warn
@@ -193,7 +273,7 @@ class Browser(DirObject):
 
 class Server(DirObject):
     def __init__(self):
-        DirObject.__init__(self, Sources['Server'])
+        DirObject.__init__(self, 'Server', Sources['Server'])
 
     def backup(self):
         copy_warn = self.copy_warn
@@ -205,7 +285,7 @@ class Server(DirObject):
             
 class Apps(DirObject):
     def __init__(self):
-        DirObject.__init__(self, Sources['Apps'])
+        DirObject.__init__(self, 'Apps', Sources['Apps'])
     
     def backup(self):
         copy_warn = self.copy_warn
@@ -217,7 +297,7 @@ class Apps(DirObject):
 
 class Flashcards(DirObject):
     def __init__(self):
-        DirObject.__init__(self, Sources['Anki'])
+        DirObject.__init__(self, 'Flashcards', Sources['Anki'])
 
     def backup(self):
         copy_warn = self.copy_warn
@@ -244,3 +324,7 @@ Test = Testing()
 
 
 JSONopen.close()
+
+if __name__ == '__main__':
+    MyDropbox.db_update('D:\\Booya')
+    pass
