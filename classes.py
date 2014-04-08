@@ -225,7 +225,7 @@ class Flashcards(DirObject):
         copy_warn('Anki')
         # Send Anki CSS file to GitHub repository directory
         print('\nCopying CSS file to GitHub repository...\n')
-        os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(self.src + '\\' + 'collection.media\\_CSS-Master.css', 'D:\\Files\\Programming\\CSS\\AnkiCSS'))
+        os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(self.src + '\\' + 'collection.media\\_CSS-Master.css', 'D:\\Files\\Programming\\Github\\AnkiCSS'))
         for directory in Dirs:
             copy_dirs(Dirs[directory], dst_sub='Flashcards\\Anki')
         self.finished()

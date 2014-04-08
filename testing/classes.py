@@ -18,7 +18,7 @@ Set JSON configuration file and related variables.
 The JSON file contains all of the directories that will be used in this script.
 """
 
-JSONopen = open('D:\\Files\\Programming\\Python\\my_projects\\AceSafe\\config.json')
+JSONopen = open('D:\\Files\\Programming\\GitHub\\AceSafe\\config.json')
 JSONdata = json.load(JSONopen)
 
 Sources = JSONdata['Sources']
@@ -334,7 +334,7 @@ class Flashcards(DirObject):
         copy_warn('Anki')
         # Send Anki CSS file to GitHub repository directory
         print('\nCopying CSS file to GitHub repository...\n')
-        os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(self.src + '\\' + 'collection.media\\_CSS-Master.css', 'D:\\Files\\Programming\\CSS\\AnkiCSS'))
+        os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(self.src + '\\' + 'collection.media\\_CSS-Master.css', 'D:\\Files\\Programming\\Github\\AnkiCSS'))
         for directory in Dirs:
             copy_dirs(Dirs[directory], dst_sub='Flashcards\\Anki')
         self.finished()
