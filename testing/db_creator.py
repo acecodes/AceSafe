@@ -31,16 +31,71 @@ import sqlite3
 # conn.close()
 
 
-conn = sqlite3.connect('database.db')
+def define_path():
 
+	# Connect to the database and establish a cursor
+	conn = sqlite3.connect('settings.db')
+	cursor = conn.cursor()
+
+	# View table
+	cursor.execute('SELECT * FROM Sources')
+	# Convert table to dictionary
+	Table = dict(cursor.fetchall())
+	# Create path variable from matching object name in table
+	name = Table['Flashcards']
+
+	# Commit and close connection to database
+	conn.commit()    
+	cursor.close()
+	conn.close()
+
+	return name
+
+# def backup_loop(self, name, table, dst_sub=''):
+
+#     # Connect to the database and establish a cursor
+#     conn = sqlite3.connect('settings.db')
+#     cursor = conn.cursor()
+
+#     # View table
+#     cursor.execute('SELECT * FROM {0}'.format(table))
+#     # Convert table to dictionary
+#     Table = dict(cursor.fetchall())
+
+#     # Commit and close connection to database
+#     conn.commit()    
+#     cursor.close()
+#     conn.close()
+
+#     self.copy_warn(name)
+
+#     if dst_sub != '':
+#         for directory in db:
+#             #self.copy_dirs(db[directory], dst_sub=dst_sub)
+#             print(directory)
+#     self.finished
+
+
+conn = sqlite3.connect('settings.db')
 cursor = conn.cursor()
 
-cursor.execute('''CREATE TABLE Sources (Name text PRIMARY KEY, Location text)''')
-result = c.fetchall()
+# View table
+cursor.execute('SELECT * FROM Sources')
+# Convert table to dictionary
+Table = cursor.fetchall()
 
+# Commit and close connection to database
 conn.commit()    
 cursor.close()
 conn.close()
 
+for name, directory in Table:
+    print(name)
 
-#DB('Fuck', 'Yeah')
+def test_func(a, b, c=1, d=3, e=2):
+	return a + b * c - d ** e
+
+def test_func2(func, **args):
+	return func(**args)
+
+print(test_func2(test_func, a=1, b=2))

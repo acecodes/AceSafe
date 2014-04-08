@@ -18,7 +18,7 @@ Set JSON configuration file and related variables.
 The JSON file contains all of the directories that will be used in this script.
 """
 
-JSONopen = open('D:\\Files\\Programming\\Python\\my_projects\\PyFile\\config.json')
+JSONopen = open('D:\\Files\\Programming\\Python\\my_projects\\AceSafe\\config.json')
 JSONdata = json.load(JSONopen)
 
 Sources = JSONdata['Sources']
@@ -89,12 +89,24 @@ class DirObject:
         print('\nUpdating: ')
         os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
 
-    def backup_loop(self, name, db, dst_sub=''):
-        self.copy_warn(name)
-        if dst_sub != '':
-            for directory in db:
-                self.copy_dirs(db[directory], dst_sub=dst_sub)
-        self.finished
+    def backup_loop(self, **args):
+
+        # Connect to the database and establish a cursor
+        conn = sqlite3.connect('settings.db')
+        cursor = conn.cursor()
+
+        # View table
+        cursor.execute('SELECT * FROM Sources')
+        # Convert table to dictionary
+        Table = cursor.fetchall()
+
+        # Commit and close connection to database
+        conn.commit()    
+        cursor.close()
+        conn.close()
+
+        for name, directory in Table:
+            self.copy_dirs(directory, **args)
 
     def compress(self, dst):
         """Zip everything in a folder (including subfolders).
@@ -139,6 +151,7 @@ class DirObject:
         input()
 
     def db_source_insert(self, table=''):
+        # Connect to the database and establish a cursor
         conn = sqlite3.connect('settings.db', isolation_level=None)
         cursor = conn.cursor()
         info = (self.name, self.src)
@@ -162,12 +175,13 @@ class DirObject:
             print('The unique key "{0}" already exists, moving on...'.format(self.name))
             pass
             
-
+        # Commit and close connection to database
         conn.commit()    
         cursor.close()
         conn.close()
 
     def db_update(self, location, table=''):
+        # Connect to the database and establish a cursor
         conn = sqlite3.connect('settings.db', isolation_level=None)
         cursor = conn.cursor()
 
@@ -182,9 +196,30 @@ class DirObject:
 
         print('Database updated, {0} new location is: {1}'.format(self.name, self.src))
 
+        # Commit and close connection to database
         conn.commit()    
         cursor.close()
         conn.close()
+
+    # Function for pulling the path of an object from the database
+    def db_path(self, table):
+        # Connect to the database and establish a cursor
+        conn = sqlite3.connect('settings.db')
+        cursor = conn.cursor()
+
+        # View table
+        cursor.execute('SELECT * FROM {0}'.format(table))
+        # Convert table to dictionary
+        Table = dict(cursor.fetchall())
+        # Create path variable from matching object name in table
+        path = Table[self.name]
+
+        # Commit and close connection to database
+        conn.commit()    
+        cursor.close()
+        conn.close()
+
+        return path
 """
 Object factory
 """
@@ -204,7 +239,7 @@ class Testing(DirObject):
 
 class Dropbox(DirObject):
     def __init__(self):
-        DirObject.__init__(self, 'Dropbox', Dirs['Dropbox'])
+        DirObject.__init__(self, 'Dropbox', 'D:\\Dropbox')
         
     def backup(self):
         copy_warn = self.copy_warn
@@ -237,11 +272,7 @@ class ExternalHD2(DirObject):
         copy_warn = self.copy_warn
         copy_dirs = self.copy_dirs
         copy_warn('External HD 2')
-        copy_dirs(Dirs['External HD 1'])
         copy_dirs(Dirs['External HD 2'])
-        copy_dirs(Dirs['Thumb Drive'], subs='Books\\Calibre')
-        copy_dirs(Dirs['Thumb Drive'], subs='Documents')
-        copy_dirs(Dirs['Thumb Drive'], subs='Programming')
         self.finished()
 
 class Thumb(DirObject):
@@ -252,8 +283,6 @@ class Thumb(DirObject):
         copy_warn = self.copy_warn
         copy_dirs = self.copy_dirs
         copy_warn('Thumb drive')
-        copy_dirs(src=self.src)
-        copy_dirs(Dirs['External HD 2'])
         copy_dirs(Dirs['Thumb Drive'], subs='Books\\Calibre')
         copy_dirs(Dirs['Thumb Drive'], subs='Documents')
         copy_dirs(Dirs['Thumb Drive'], subs='Programming')
@@ -261,7 +290,7 @@ class Thumb(DirObject):
 
 class Browser(DirObject):
     def __init__(self):
-        DirObject.__init__(self, 'Browser', Sources['Chrome'])
+        DirObject.__init__(self, 'Browser', 'C:\\Users\\User1\\AppData\\Local\\Google\\Chrome\\User Data\\Default')
 
     def backup(self):
         copy_warn = self.copy_warn
@@ -273,7 +302,7 @@ class Browser(DirObject):
 
 class Server(DirObject):
     def __init__(self):
-        DirObject.__init__(self, 'Server', Sources['Server'])
+        DirObject.__init__(self, 'Server', 'C:\\XAMPP\\htdocs')
 
     def backup(self):
         copy_warn = self.copy_warn
@@ -285,7 +314,7 @@ class Server(DirObject):
             
 class Apps(DirObject):
     def __init__(self):
-        DirObject.__init__(self, 'Apps', Sources['Apps'])
+        DirObject.__init__(self, 'Apps', 'D:\\Dropbox\\Apps')
     
     def backup(self):
         copy_warn = self.copy_warn
@@ -297,7 +326,7 @@ class Apps(DirObject):
 
 class Flashcards(DirObject):
     def __init__(self):
-        DirObject.__init__(self, 'Flashcards', Sources['Anki'])
+        DirObject.__init__(self, 'Flashcards', 'D:\\User\\Documents\\Anki\\User 1')
 
     def backup(self):
         copy_warn = self.copy_warn
@@ -318,7 +347,9 @@ MyFlashcards = Flashcards()
 MyBrowser = Browser()
 MyServer = Server()
 MyApps = Apps()
-MyExternals = ExternalHDs()
+MyExternalHD1 = ExternalHD1()
+MyExternalHD2 = ExternalHD2()
+MyThumb = Thumb()
 MyDropbox = Dropbox()
 Test = Testing()
 
@@ -326,5 +357,5 @@ Test = Testing()
 JSONopen.close()
 
 if __name__ == '__main__':
-    MyDropbox.db_update('D:\\Booya')
+    print(MyDropbox.__dict__['src'])
     pass
