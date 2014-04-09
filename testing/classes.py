@@ -258,10 +258,6 @@ class ExternalHD1(DirObject):
         copy_dirs = self.copy_dirs
         copy_warn('External HD 1')
         copy_dirs(Dirs['External HD 1'])
-        copy_dirs(Dirs['External HD 2'])
-        copy_dirs(Dirs['Thumb Drive'], subs='Books\\Calibre')
-        copy_dirs(Dirs['Thumb Drive'], subs='Documents')
-        copy_dirs(Dirs['Thumb Drive'], subs='Programming')
         self.finished()
 
 class ExternalHD2(DirObject):
