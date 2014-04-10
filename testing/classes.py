@@ -1,5 +1,4 @@
 import os
-import json
 import filecmp
 import shutil
 import zipfile
@@ -11,19 +10,6 @@ import sqlite3
 ## 1. Convert copy functions to classes - Done!
 ## 2. Implement GUI
 ## 3. Take over the world. Bwaha....bwa..bwahaha...BWAHAHHAHAHAHA!
-
-
-"""
-Set JSON configuration file and related variables.
-The JSON file contains all of the directories that will be used in this script.
-"""
-
-JSONopen = open('D:\\Files\\Programming\\GitHub\\AceSafe\\config.json')
-JSONdata = json.load(JSONopen)
-
-Sources = JSONdata['Sources']
-Dirs = JSONdata['Dirs']
-Dropbox_Dirs = JSONdata['Dropbox Dirs']
 
 
 """
@@ -39,18 +25,21 @@ class DirObject:
     def __init__(self, name, src):
         self.name = name
         self.src = src
-        self.db_source_insert()
+        # self.db_source_insert() - Disabled until I reinstate database functionality
 
     def __str__(self):
-        return 'This object\'s home directory is: %s' % (self.src)
+        return self.src
 
     def __dict__(self):
         return dict({self.name:self.dst})
+
+    # -- BEGIN FILE OPERATION FUNCTIONS -- #
 
     # A big thank you goes out to Pi Marillion (on StackOverflow) for helping me work out the mechanics of this method
     def copy_dirs(self, dst, src='', subs='', dst_sub=''):
         """Searches for and deletes files not found in the source, then copies any new files to the destination
         """
+
         if not src:
             src = self.src
         if subs:
@@ -89,25 +78,17 @@ class DirObject:
         print('\nUpdating: ')
         os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
 
-    def backup_loop(self, **args):
+    def routine(self, *dirobjs,**copy_args):
+        for dirs in dirobjs:
+            self.copy_dirs(dirs, **copy_args)
 
-        # Connect to the database and establish a cursor
-        conn = sqlite3.connect('settings.db')
-        cursor = conn.cursor()
+    # Warning before copying
+    def copy_warn(self, dst):
+        print('\n%s files are about to be copied..' % dst)
+        print('Press any key to continue...\n')
+        input()
 
-        # View table
-        cursor.execute('SELECT * FROM Sources')
-        # Convert table to dictionary
-        Table = cursor.fetchall()
-
-        # Commit and close connection to database
-        conn.commit()    
-        cursor.close()
-        conn.close()
-
-        for name, directory in Table:
-            self.copy_dirs(directory, **args)
-
+    # Compress a DirObject into a zip file
     def compress(self, dst):
         """Zip everything in a folder (including subfolders).
         """
@@ -137,18 +118,9 @@ class DirObject:
         finally:
             zipper.close()
         
+    # -- END FILE OPERATION FUNCTIONS -- #
 
-            
-    # Message confirming end of copy activity
-    def finished(self):
-        print("\nAll done!  Returning to main menu...\n")
-        input()
-
-    # Warning before copying
-    def copy_warn(self, dst):
-        print('\n%s files are about to be copied..' % dst)
-        print('Press any key to continue...\n')
-        input()
+    # -- BEGIN DATABASE FUNCTIONS -- #
 
     def db_source_insert(self, table=''):
         # Connect to the database and establish a cursor
@@ -220,6 +192,8 @@ class DirObject:
         conn.close()
 
         return path
+
+        # -- END DATABASE FUNCTIONS -- #
 """
 Object factory
 """
@@ -227,131 +201,23 @@ Object factory
 def factory(Parent_Class, *pargs, **kargs):
        return Parent_Class(*pargs, **kargs)
 
-
-"""
-Directory Objects
-"""
-
-class Testing(DirObject):
-    def __init__(self):
-        DirObject.__init__(self, 'Testing', 'C:\\Temp\\1')
-
-
-class Dropbox(DirObject):
-    def __init__(self):
-        DirObject.__init__(self, 'Dropbox', 'D:\\Dropbox')
-        
-    def backup(self):
-        copy_warn = self.copy_warn
-        copy_dirs = self.copy_dirs
-        copy_warn('Dropbox')
-        for directory in Dropbox_Dirs:
-            copy_dirs(Dirs['Dropbox'], src=Dirs['Files'], subs=Dropbox_Dirs[directory])
-        self.finished()
-
-class ExternalHD1(DirObject):
-    def __init__(self):
-        DirObject.__init__(self, 'ExternalHD1', 'G:\\')
-
-    def backup(self):
-        copy_warn = self.copy_warn
-        copy_dirs = self.copy_dirs
-        copy_warn('External HD 1')
-        copy_dirs(Dirs['External HD 1'])
-        self.finished()
-
-class ExternalHD2(DirObject):
-    def __init__(self):
-        DirObject.__init__(self, 'ExternalHD2', 'H:\\')
-
-    def backup(self):
-        copy_warn = self.copy_warn
-        copy_dirs = self.copy_dirs
-        copy_warn('External HD 2')
-        copy_dirs(Dirs['External HD 2'])
-        self.finished()
-
-class Thumb(DirObject):
-    def __init__(self):
-        DirObject.__init__(self, 'Thumb', 'F:\\')
-
-    def backup(self):
-        copy_warn = self.copy_warn
-        copy_dirs = self.copy_dirs
-        copy_warn('Thumb drive')
-        copy_dirs(Dirs['Thumb Drive'], subs='Books\\Calibre')
-        copy_dirs(Dirs['Thumb Drive'], subs='Documents')
-        copy_dirs(Dirs['Thumb Drive'], subs='Programming')
-        self.finished()
-
-class Browser(DirObject):
-    def __init__(self):
-        DirObject.__init__(self, 'Browser', 'C:\\Users\\User1\\AppData\\Local\\Google\\Chrome\\User Data\\Default')
-
-    def backup(self):
-        copy_warn = self.copy_warn
-        copy_dirs = self.copy_dirs
-        copy_warn('Browser')
-        for directory in Dirs:
-            copy_dirs(Dirs[directory], dst_sub='Browsers\\Chrome')
-        self.finished()
-
-class Server(DirObject):
-    def __init__(self):
-        DirObject.__init__(self, 'Server', 'C:\\XAMPP\\htdocs')
-
-    def backup(self):
-        copy_warn = self.copy_warn
-        copy_dirs = self.copy_dirs
-        copy_warn('Server')
-        for directory in Dirs:
-            copy_dirs(Dirs[directory], dst_sub='Documents\\Server')
-        self.finished()
-            
-class Apps(DirObject):
-    def __init__(self):
-        DirObject.__init__(self, 'Apps', 'D:\\Dropbox\\Apps')
-    
-    def backup(self):
-        copy_warn = self.copy_warn
-        copy_dirs = self.copy_dirs
-        copy_warn('Apps')
-        for directory in Dirs:
-            copy_dirs(Dirs[directory], dst_sub='Apps')
-        self.finished()
-
-class Flashcards(DirObject):
-    def __init__(self):
-        DirObject.__init__(self, 'Flashcards', 'D:\\User\\Documents\\Anki\\User 1')
-
-    def backup(self):
-        copy_warn = self.copy_warn
-        copy_dirs = self.copy_dirs
-        copy_warn('Anki')
-        # Send Anki CSS file to GitHub repository directory
-        print('\nCopying CSS file to GitHub repository...\n')
-        os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(self.src + '\\' + 'collection.media\\_CSS-Master.css', 'D:\\Files\\Programming\\Github\\AnkiCSS'))
-        for directory in Dirs:
-            copy_dirs(Dirs[directory], dst_sub='Flashcards\\Anki')
-        self.finished()
-
-
 """
 Instances
 """
-MyFlashcards = Flashcards()
-MyBrowser = Browser()
-MyServer = Server()
-MyApps = Apps()
-MyExternalHD1 = ExternalHD1()
-MyExternalHD2 = ExternalHD2()
-MyThumb = Thumb()
-MyDropbox = Dropbox()
-Test = Testing()
-
-
-JSONopen.close()
+Apps = DirObject('Apps', 'D:\\Dropbox\\Apps')
+Browser = DirObject('Browser', 'C:\\Users\\User1\\AppData\\Local\\Google\\Chrome\\User Data\\Default')
+Dropbox = DirObject('Dropbox', 'D:\\Dropbox')
+ExternalHD1 = DirObject('ExternalHD1', 'G:\\')
+ExternalHD2 = DirObject('ExternalHD2', 'H:\\')
+Files = DirObject('Files', 'D:\\Files')
+Flashcards = DirObject('Flashcards', 'D:\\User\\Documents\\Anki\\User 1')
+Music = DirObject('Music', 'D:\\Dropbox\\Music')
+Server = DirObject('Server', 'C:\\XAMPP\\htdocs')
+Testing = DirObject('Testing', 'C:\\Temp')
+Testing2 = DirObject('Testing 2', 'C:\\Temp 2')
+Testing3 = DirObject('Testing 3', 'C:\\Temp 3')
+Thumb = DirObject('Thumb', 'F:\\')
 
 if __name__ == '__main__':
-    print(MyDropbox.__dict__['src'])
+    Testing.routine(Testing2.src, Testing3.src, subs='2')
     pass
