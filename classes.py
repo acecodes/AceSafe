@@ -21,7 +21,7 @@ class DirObject:
     A directory object that represents a location on the hard drive.
     The argument 'src' represents that location and is required for all instances.
     """
-    
+
     def __init__(self, name, src):
         self.name = name
         self.src = src
@@ -33,20 +33,20 @@ class DirObject:
     def __dict__(self):
         return dict({self.name:self.dst})
 
-    # -- BEGIN FILE OPERATION FUNCTIONS -- #
-
     # A big thank you goes out to Pi Marillion (on StackOverflow) for helping me work out the mechanics of this method
-    def copy_dirs(self, dst, src='', subs='', dst_sub=''):
+    def copy_dirs(self, dst, subs='', src_sub='', dst_sub=''):
         """Searches for and deletes files not found in the source, then copies any new files to the destination
         """
         # Join paths (if specified)
-        if not src:
-            src = self.src
+        src = self.src
         if subs:
             src = os.path.join(src, subs)
             dst = os.path.join(dst, subs)
         if dst_sub:
             dst = os.path.join(dst, dst_sub)
+        if src_sub:
+            src = os.path.join(src, src_sub)
+        print('\nComparing...\n')
         print('\nSource: %s' % src)
         print('Destination: %s\n' % dst)
         for src_root, src_dirs, src_files in os.walk(src, topdown=True):
@@ -56,7 +56,7 @@ class DirObject:
             for item in dirs.right_only:
                 try:
                     print('Removing ' + item)
-                except:
+                except UnicodeEncodeError:
                     print('Removing file (Unicode error)') # Prevents the program from stopping in the event of an awkward file name
                 dst_path = os.path.join(dst_root, item)
                 if os.path.isdir(dst_path):
@@ -67,7 +67,7 @@ class DirObject:
             for item in dirs.left_only:
                 try:
                     print('Adding ' + item)
-                except:
+                except UnicodeEncodeError:
                     print('Adding file (Unicode error)') # Prevents the program from stopping in the event of an awkward file name
                 src_path = os.path.join(src_root, item)
                 if os.path.isdir(src_path):
@@ -80,7 +80,7 @@ class DirObject:
 
     def routine(self, *dirobjs,**copy_args):
         for dirs in dirobjs:
-            self.copy_dirs(dirs, **copy_args)
+            self.copy_dirs(dirs.src, **copy_args)
 
     # Warning before copying
     def copy_warn(self, dst):
@@ -117,83 +117,83 @@ class DirObject:
             sys.exit(1)
         finally:
             zipper.close()
-        
-    # -- END FILE OPERATION FUNCTIONS -- #
 
-    # -- BEGIN DATABASE FUNCTIONS -- #
 
-    def db_source_insert(self, table=''):
-        # Connect to the database and establish a cursor
-        conn = sqlite3.connect('settings.db', isolation_level=None)
-        cursor = conn.cursor()
-        info = (self.name, self.src)
+# A class specifically for database operations
+class DB_drone:
+        def routines_insert(self, database, table, *routines):
+            # Connect to the database and establish a cursor
+            conn = sqlite3.connect(database, isolation_level=None)
+            cursor = conn.cursor()
 
-        result = cursor.fetchall()
+            result = cursor.fetchall()
 
-        if table == '':
-            table = 'Sources'
+            try:
+                # Delete table if it exists, then recreate it with fresh data
+                self.drop(database, table)
+                cursor.execute('''CREATE TABLE {0} (Routine TEXT PRIMARY KEY);'''.format(table))
+                #print('Table {0} did not exist, created it...'.format(name))
+            except:
+                # Create the table if it doesn't exist to begin with
+                cursor.execute('''CREATE TABLE {0} (Routine TEXT PRIMARY KEY);'''.format(table))
 
-        try:
-            # Create table if it doesn't exist
-            cursor.execute('''CREATE TABLE {0} (Name text PRIMARY KEY, Location text)'''.format(table))
-            print('Table does not exist, creating one...')
-        except:
-            pass
-
-        try:
             # Insert name and location into database
-            cursor.execute('''INSERT INTO {0} VALUES (?, ?)'''.format(table), info)
-        except sqlite3.IntegrityError:
-            print('The unique key "{0}" already exists, moving on...'.format(self.name))
-            pass
-            
-        # Commit and close connection to database
-        conn.commit()    
-        cursor.close()
-        conn.close()
+            for items in routines:
+                # Enable for debugging
+                #print('Adding {0} to table {1}'.format(items, name))
+                try:
+                    cursor.execute('''INSERT INTO {0} (Routine) VALUES (?)'''.format(table), (items,))
+                except sqlite3.IntegrityError:
+                    # Enable for debugging
+                    # print('Unique key {0} already exists, moving on...'.format(items))
+                    continue
+                
+            # Commit and close connection to database
+            conn.commit()    
+            cursor.close()
+            conn.close()
 
-    def db_update(self, location, table=''):
-        # Connect to the database and establish a cursor
-        conn = sqlite3.connect('settings.db', isolation_level=None)
-        cursor = conn.cursor()
+        # Delete table from database
+        def drop(self, database, table, echo=False):
+            # Connect to the database and establish a cursor
+            conn = sqlite3.connect(database, isolation_level=None)
+            cursor = conn.cursor()
 
-        print('Updating database with new object location for {0}...'.format(self.name))
+            if echo == True:
+                print('Deleting table {0} from {1}...'.format(table, database))
 
-        self.src = location
+            try:
+                cursor.execute('''DROP TABLE {0}'''.format(table))
+                if echo == True:
+                    print('Deleted...')
+            except:
+                print('Table not deleted...')
+            # Commit and close connection to database
+            conn.commit()    
+            cursor.close()
+            conn.close()
 
-        if table == '':
-            table = 'Sources'
+        # Run routines from database
+        def run(self, database, table):
+            # Connect to the database and establish a cursor
+            conn = sqlite3.connect(database, isolation_level=None)
+            cursor = conn.cursor()
 
-        cursor.execute('''UPDATE {0} SET Location = ? WHERE Name = ?'''.format(table), (location, self.name))
+            data = cursor.execute('''SELECT * FROM {0}'''.format(table))
 
-        print('Database updated, {0} new location is: {1}'.format(self.name, self.src))
+            routine_list = []
+            for routines in data:
+                routine_list.append(list(routines))
 
-        # Commit and close connection to database
-        conn.commit()    
-        cursor.close()
-        conn.close()
+            for items in routine_list:
+                eval(items[0])
 
-    # Function for pulling the path of an object from the database
-    def db_path(self, table):
-        # Connect to the database and establish a cursor
-        conn = sqlite3.connect('settings.db')
-        cursor = conn.cursor()
+            # Commit and close connection to database
+            conn.commit()    
+            cursor.close()
+            conn.close()
 
-        # View table
-        cursor.execute('SELECT * FROM {0}'.format(table))
-        # Convert table to dictionary
-        Table = dict(cursor.fetchall())
-        # Create path variable from matching object name in table
-        path = Table[self.name]
 
-        # Commit and close connection to database
-        conn.commit()    
-        cursor.close()
-        conn.close()
-
-        return path
-
-        # -- END DATABASE FUNCTIONS -- #
 """
 Object factory
 """
@@ -207,17 +207,41 @@ Instances
 Apps = DirObject('Apps', 'D:\\Dropbox\\Apps')
 Browser = DirObject('Browser', 'C:\\Users\\User1\\AppData\\Local\\Google\\Chrome\\User Data\\Default')
 Dropbox = DirObject('Dropbox', 'D:\\Dropbox')
-ExternalHD1 = DirObject('ExternalHD1', 'G:\\')
-ExternalHD2 = DirObject('ExternalHD2', 'H:\\')
+ExternalHD1 = DirObject('ExternalHD1', 'G:\\Files')
+ExternalHD2 = DirObject('ExternalHD2', 'H:\\Files')
 Files = DirObject('Files', 'D:\\Files')
 Flashcards = DirObject('Flashcards', 'D:\\User\\Documents\\Anki\\User 1')
 Music = DirObject('Music', 'D:\\Dropbox\\Music')
 Server = DirObject('Server', 'C:\\XAMPP\\htdocs')
-Testing = DirObject('Testing', 'C:\\Temp')
-Testing2 = DirObject('Testing 2', 'C:\\Temp 2')
-Testing3 = DirObject('Testing 3', 'C:\\Temp 3')
 Thumb = DirObject('Thumb', 'F:\\')
 
+DB = DB_drone()
+
+DB.routines_insert("routines.db", "ExternalHDs",
+    "Music.routine(Files, dst_sub='Music')",
+    "Files.routine(ExternalHD1, ExternalHD2, dst_sub='Files')",
+    "Files.routine(Thumb, subs='Documents')",
+    "Files.routine(Thumb, subs='Books\\Calibre')",
+    "Files.routine(Thumb, subs='Programming')")
+
+DB.routines_insert("routines.db", "Dropbox",
+    "Files.routine(Dropbox, subs='Documents')",
+    "Files.routine(Dropbox, subs='Books\\Calibre')",
+    "Files.routine(Dropbox, subs='Programming')",
+    "Files.routine(Dropbox, subs='Photos')")
+
+DB.routines_insert("routines.db", "Flashcards",
+    "Flashcards.routine(Files, dst_sub='Flashcards\\Anki')",
+    "Files.routine(Dropbox, ExternalHD1, ExternalHD2, Thumb, subs='Flashcards\\Anki')")
+
+DB.routines_insert("routines.db", "Browser",
+    "Browser.routine(Files, Dropbox, ExternalHD1, ExternalHD2, Thumb, dst_sub='Browsers\\Chrome')")
+
+DB.routines_insert("routines.db", "Server",
+    "Server.routine(Files, Dropbox, ExternalHD1, ExternalHD2, Thumb, dst_sub='Documents\\Server')")
+
+DB.routines_insert("routines.db", "Apps",
+    "Server.routine(Files, Dropbox, ExternalHD1, ExternalHD2, Thumb, dst_sub='Documents\\Server')")
+
 if __name__ == '__main__':
-    #Testing.routine(Testing2.src, Testing3.src, subs='2')
     pass

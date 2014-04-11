@@ -213,3 +213,9 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+#AceSafe-specific
+*.db
+__pychache__/
+testing/*.*
+testing/classes.py
