@@ -34,6 +34,7 @@ def finished():
     input()
     welcome()
 
+# Message that files are about to be copied
 def copy_warn(name):
     print('\n%s files are about to be copied..' % name)
     print('Press any key to continue...\n')
@@ -43,6 +44,7 @@ def copy_warn(name):
 def select(selection):
     if selection == welcome_choices.index('Copy files to external hard drives')+1:
         copy_warn('External HDs')
+        c.Dropbox.routine(c.Files.src, c.ExternalHD1, c.ExternalHD2, subs="Music")
         c.Files.routine(c.ExternalHD1.src, c.ExternalHD2.src, dst_sub='Files')
         c.Files.routine(c.Thumb.src, subs='Documents')
         c.Files.routine(c.Thumb.src, subs='Books\\Calibre')
