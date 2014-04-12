@@ -219,3 +219,4 @@ pip-log.txt
 __pychache__/
 testing/*.*
 testing/classes.py
+testing/classes.py

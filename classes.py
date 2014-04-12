@@ -217,9 +217,11 @@ Thumb = DirObject('Thumb', 'F:\\')
 
 DB = DB_drone()
 
+
+# Build routines and insert them into the database
 DB.routines_insert("routines.db", "ExternalHDs",
     "Music.routine(Files, dst_sub='Music')",
-    "Files.routine(ExternalHD1, ExternalHD2, dst_sub='Files')",
+    "Files.routine(ExternalHD1, ExternalHD2)",
     "Files.routine(Thumb, subs='Documents')",
     "Files.routine(Thumb, subs='Books\\Calibre')",
     "Files.routine(Thumb, subs='Programming')")
