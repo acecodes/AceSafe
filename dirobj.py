@@ -3,18 +3,6 @@ import filecmp
 import shutil
 import zipfile
 import sys
-import sqlite3
-
-##
-## Tasks:
-## 1. Convert copy functions to classes - Done!
-## 2. Implement GUI
-## 3. Take over the world. Bwaha....bwa..bwahaha...BWAHAHHAHAHAHA!
-
-
-"""
-Classes
-"""
 
 class DirObject:
     """
@@ -119,85 +107,11 @@ class DirObject:
             zipper.close()
 
 
-# A class specifically for database operations
-class DB_drone:
-        def routines_insert(self, database, table, *routines):
-            # Connect to the database and establish a cursor
-            conn = sqlite3.connect(database, isolation_level=None)
-            cursor = conn.cursor()
-
-            result = cursor.fetchall()
-
-            try:
-                # Delete table if it exists, then recreate it with fresh data
-                self.drop(database, table)
-                cursor.execute('''CREATE TABLE {0} (Routine TEXT PRIMARY KEY);'''.format(table))
-                #print('Table {0} did not exist, created it...'.format(name))
-            except:
-                # Create the table if it doesn't exist to begin with
-                cursor.execute('''CREATE TABLE {0} (Routine TEXT PRIMARY KEY);'''.format(table))
-
-            # Insert name and location into database
-            for items in routines:
-                # Enable for debugging
-                #print('Adding {0} to table {1}'.format(items, name))
-                try:
-                    cursor.execute('''INSERT INTO {0} (Routine) VALUES (?)'''.format(table), (items,))
-                except sqlite3.IntegrityError:
-                    # Enable for debugging
-                    # print('Unique key {0} already exists, moving on...'.format(items))
-                    continue
-                
-            # Commit and close connection to database
-            conn.commit()    
-            cursor.close()
-            conn.close()
-
-        # Delete table from database
-        def drop(self, database, table, echo=False):
-            # Connect to the database and establish a cursor
-            conn = sqlite3.connect(database, isolation_level=None)
-            cursor = conn.cursor()
-
-            if echo == True:
-                print('Deleting table {0} from {1}...'.format(table, database))
-
-            try:
-                cursor.execute('''DROP TABLE {0}'''.format(table))
-                if echo == True:
-                    print('Deleted...')
-            except:
-                print('Table not deleted...')
-            # Commit and close connection to database
-            conn.commit()    
-            cursor.close()
-            conn.close()
-
-        # Run routines from database
-        def run(self, database, table):
-            # Connect to the database and establish a cursor
-            conn = sqlite3.connect(database, isolation_level=None)
-            cursor = conn.cursor()
-
-            data = cursor.execute('''SELECT * FROM {0}'''.format(table))
-
-            routine_list = []
-            for routines in data:
-                routine_list.append(list(routines))
-
-            for items in routine_list:
-                eval(items[0])
-
-            # Commit and close connection to database
-            conn.commit()    
-            cursor.close()
-            conn.close()
 
 
 """
 Object factory
 """
-
 def factory(Parent_Class, *pargs, **kargs):
        return Parent_Class(*pargs, **kargs)
 
@@ -214,36 +128,3 @@ Flashcards = DirObject('Flashcards', 'D:\\User\\Documents\\Anki\\User 1')
 Music = DirObject('Music', 'D:\\Dropbox\\Music')
 Server = DirObject('Server', 'C:\\XAMPP\\htdocs')
 Thumb = DirObject('Thumb', 'F:\\')
-
-DB = DB_drone()
-
-
-# Build routines and insert them into the database
-DB.routines_insert("routines.db", "ExternalHDs",
-    "Music.routine(Files, dst_sub='Music')",
-    "Files.routine(ExternalHD1, ExternalHD2)",
-    "Files.routine(Thumb, subs='Documents')",
-    "Files.routine(Thumb, subs='Books\\Calibre')",
-    "Files.routine(Thumb, subs='Programming')")
-
-DB.routines_insert("routines.db", "Dropbox",
-    "Files.routine(Dropbox, subs='Documents')",
-    "Files.routine(Dropbox, subs='Books\\Calibre')",
-    "Files.routine(Dropbox, subs='Programming')",
-    "Files.routine(Dropbox, subs='Photos')")
-
-DB.routines_insert("routines.db", "Flashcards",
-    "Flashcards.routine(Files, dst_sub='Flashcards\\Anki')",
-    "Files.routine(Dropbox, ExternalHD1, ExternalHD2, Thumb, subs='Flashcards\\Anki')")
-
-DB.routines_insert("routines.db", "Browser",
-    "Browser.routine(Files, Dropbox, ExternalHD1, ExternalHD2, Thumb, dst_sub='Browsers\\Chrome')")
-
-DB.routines_insert("routines.db", "Server",
-    "Server.routine(Files, Dropbox, ExternalHD1, ExternalHD2, Thumb, dst_sub='Documents\\Server')")
-
-DB.routines_insert("routines.db", "Apps",
-    "Server.routine(Files, Dropbox, ExternalHD1, ExternalHD2, Thumb, dst_sub='Documents\\Server')")
-
-if __name__ == '__main__':
-    pass
