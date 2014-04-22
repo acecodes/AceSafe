@@ -134,6 +134,7 @@ DB = DB_drone()
 # Build routines and insert them into the database
 def rebuild_db():
     DB.routines_insert("routines.db", "ExternalHDs",
+        "Photos.routine(ExternalHD1, ExternalHD2, dst_sub='Media\\Dropbox Photos')",
         "Music.routine(Files, dst_sub='Music')",
         "Files.routine(ExternalHD1, ExternalHD2)",
         "Files.routine(Thumb, subs='Documents')",
