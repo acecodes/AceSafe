@@ -64,7 +64,7 @@ class DirObject:
                     shutil.copy2(src_path, os.path.join(dst_root, item))
         # Once clearing and adding has completed, update existing files
         print('\nUpdating: ')
-        os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
+        os.system("""cp -r "{0}" "{1}" """.format(src, dst))
 
     def routine(self, *dirobjs,**copy_args):
         for dirs in dirobjs:
@@ -118,14 +118,13 @@ def factory(Parent_Class, *pargs, **kargs):
 """
 Instances
 """
-Apps = DirObject('Apps', 'D:\\Dropbox\\Apps')
-Browser = DirObject('Browser', 'C:\\Users\\User1\\AppData\\Local\\Google\\Chrome\\User Data\\Default')
-Dropbox = DirObject('Dropbox', 'D:\\Dropbox')
-ExternalHD1 = DirObject('ExternalHD1', 'G:\\Files')
-ExternalHD2 = DirObject('ExternalHD2', 'H:\\Files')
-Files = DirObject('Files', 'D:\\Files')
-Flashcards = DirObject('Flashcards', 'D:\\User\\Documents\\Anki\\User 1')
-Music = DirObject('Music', 'D:\\Dropbox\\Music')
-Photos = DirObject('Photos', 'D:\\Dropbox\\Camera Uploads')
-Server = DirObject('Server', 'C:\\XAMPP\\htdocs')
-Thumb = DirObject('Thumb', 'F:\\')
+Browser = DirObject('Browser', '/media/dudebro/Delta/Files/Browser/Firefox')
+Dropbox = DirObject('Dropbox', '/media/dudebro/Delta/Dropbox')
+ExternalHD1 = DirObject('ExternalHD1', '/media/dudebro/BlueStealth/Files')
+ExternalHD2 = DirObject('ExternalHD2', '/media/dudebro/Victory/Files')
+Files = DirObject('Files', '/media/dudebro/Delta/Files')
+Flashcards = DirObject('Flashcards', '~/Anki/"User 1"')
+Music = DirObject('Music', '/media/dudebro/Delta/Dropbox/Music')
+Photos = DirObject('Photos', '/media/dudebro/Delta/Dropbox/Camera Uploads')
+Thumb = DirObject('Thumb', '/media/dudebro/The Stick')
+Scripts = DirObject('Scripts', '~/dev/scripts')
