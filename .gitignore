@@ -218,5 +218,5 @@ pip-log.txt
 *.db
 __pychache__/
 testing/*.*
-testing/classes.py
-testing/classes.py
+my_build.py
+my_build_win.py

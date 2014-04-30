@@ -4,6 +4,8 @@ import shutil
 import zipfile
 import sys
 
+plat = sys.platform
+
 class DirObject:
     """
     A directory object that represents a location on the hard drive.
@@ -64,7 +66,10 @@ class DirObject:
                     shutil.copy2(src_path, os.path.join(dst_root, item))
         # Once clearing and adding has completed, update existing files
         print('\nUpdating: ')
-        os.system("""cp -r "{0}" "{1}" """.format(src, dst))
+        if plat != 'win32':
+            os.system("""rsync -v -r "{0}"/* "{1}" """.format(src, dst))
+        else:
+            os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
 
     def routine(self, *dirobjs,**copy_args):
         for dirs in dirobjs:
@@ -114,17 +119,3 @@ Object factory
 """
 def factory(Parent_Class, *pargs, **kargs):
        return Parent_Class(*pargs, **kargs)
-
-"""
-Instances
-"""
-Browser = DirObject('Browser', '/media/dudebro/Delta/Files/Browser/Firefox')
-Dropbox = DirObject('Dropbox', '/media/dudebro/Delta/Dropbox')
-ExternalHD1 = DirObject('ExternalHD1', '/media/dudebro/BlueStealth/Files')
-ExternalHD2 = DirObject('ExternalHD2', '/media/dudebro/Victory/Files')
-Files = DirObject('Files', '/media/dudebro/Delta/Files')
-Flashcards = DirObject('Flashcards', '~/Anki/"User 1"')
-Music = DirObject('Music', '/media/dudebro/Delta/Dropbox/Music')
-Photos = DirObject('Photos', '/media/dudebro/Delta/Dropbox/Camera Uploads')
-Thumb = DirObject('Thumb', '/media/dudebro/The Stick')
-Scripts = DirObject('Scripts', '~/dev/scripts')

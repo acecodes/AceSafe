@@ -3,6 +3,7 @@
 
 import db
 import dirobj
+from os import system
 
 # User name for welcome message
 name = 'User'
@@ -13,7 +14,7 @@ def welcome(name=name):
     try:
         rebuild = int(input('\nWould you like to rebuild the database before you begin?\nPress 1 for yes, anything else for no:  '))
         if rebuild == 1:
-            db.rebuild_db()
+            system("""python3 ./my_build.py""")
         else:
             pass
     except ValueError:

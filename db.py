@@ -125,31 +125,3 @@ class DB_drone:
                 print('\nThat file or directory is being used and cannot be copied.\nShut down the program using it and try again.\n')
                 input()
                 self.create_menu(database)
-
-"""
-Database worker instance
-"""
-DB = DB_drone()
-
-# Build routines and insert them into the database
-def rebuild_db():
-    DB.routines_insert("routines.db", "ExternalHDs",
-        "Photos.routine(Files, dst_sub='Media/Dropbox Photos')",
-        "Music.routine(Files, dst_sub='Music')",
-        "Files.routine(ExternalHD1, ExternalHD2)",
-        "Files.routine(Thumb, subs='Documents')",
-        "Files.routine(Thumb, subs='Books/Calibre')",
-        "Files.routine(Thumb, subs='Programming')")
-
-    DB.routines_insert("routines.db", "Dropbox",
-        "Files.routine(Dropbox, subs='Documents')",
-        "Files.routine(Dropbox, subs='Books/Calibre')",
-        "Files.routine(Dropbox, subs='Programming')",
-        "Files.routine(Dropbox, subs='Photos')")
-
-    DB.routines_insert("routines.db", "Flashcards",
-        "Flashcards.routine(Files, dst_sub='Flashcards/Anki')",
-        "Files.routine(Dropbox, ExternalHD1, ExternalHD2, Thumb, subs='Flashcards/Anki')")
-
-    DB.routines_insert("routines.db", "Browser",
-        "Browser.routine(Files, Dropbox, ExternalHD1, ExternalHD2, Thumb, dst_sub='Browsers/Chrome')")
