@@ -1,5 +1,7 @@
 import sqlite3
-from dirobj import *
+from getpass import getuser
+from my_instances import *
+
 
 # A class specifically for database operations
 class DB_drone:
@@ -12,17 +14,18 @@ class DB_drone:
 
             try:
                 # Delete table if it exists, then recreate it with fresh data
-                self.drop(database, table)
+                cursor.execute('''DROP TABLE {0}'''.format(table))
                 cursor.execute('''CREATE TABLE {0} (Routine TEXT PRIMARY KEY);'''.format(table))
-                #print('Table {0} did not exist, created it...'.format(name))
+                print('Table {0} exists, deleting it...'.format(table))
             except:
                 # Create the table if it doesn't exist to begin with
                 cursor.execute('''CREATE TABLE {0} (Routine TEXT PRIMARY KEY);'''.format(table))
+                print('Table {0} did not exist, created it...'.format(table))
 
             # Insert name and location into database
             for items in routines:
                 # Enable for debugging
-                #print('Adding {0} to table {1}'.format(items, name))
+                print('Adding {0} to table {1}'.format(items, table))
                 try:
                     cursor.execute('''INSERT INTO {0} (Routine) VALUES (?)'''.format(table), (items,))
                 except sqlite3.IntegrityError:
@@ -76,6 +79,10 @@ class DB_drone:
             cursor.close()
             conn.close()
 
+        def invalid_choice(self):
+            print('\nThat is not a valid choice. Please try again.\n')
+            input()
+            self.create_menu(database)            
 
         # Generates a menu for use in the command prompt/bash shell and allows a user to select a syncing routine
         def create_menu(self, database):
@@ -109,19 +116,17 @@ class DB_drone:
                 print('\nYou chose: ' + tables[choice] + '\n' + 'Press any key to continue...\n')
                 input()
             except IndexError:
-                print('\nThat is not a valid choice. Please try again.\n')
-                input()
-                self.create_menu(database)
+                self.invalid_choice()
             except ValueError:
-                print('\nThat is not a valid choice. Please try again.\n')
-                input()
-                self.create_menu(database)
+                self.invalid_choice()
+            except SyntaxError:
+                pass
 
             # Execute the routine, then return to the main menu (even if there are problems)
-            try:
-                self.run("routines.db", tables[choice])
-                self.create_menu(database)
-            except PermissionError:
-                print('\nThat file or directory is being used and cannot be copied.\nShut down the program using it and try again.\n')
-                input()
-                self.create_menu(database)
+            self.run("routines.db", tables[choice])
+            self.create_menu(database)
+
+"""
+Database worker instance
+"""
+DB = DB_drone()

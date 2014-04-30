@@ -14,10 +14,12 @@ def welcome(name=name):
     try:
         rebuild = int(input('\nWould you like to rebuild the database before you begin?\nPress 1 for yes, anything else for no:  '))
         if rebuild == 1:
-            system("""python3 ./my_build.py""")
+            system("""python3 my_build.py""")
         else:
             pass
     except ValueError:
+        pass
+    except SyntaxError:
         pass
 
 

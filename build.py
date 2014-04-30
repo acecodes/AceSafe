@@ -4,15 +4,6 @@
 from db import DB_drone
 from dirobj import DirObject
 
-"""
-DirObject instances
-"""
-# Create DirObjects for the directories you want to backup using the following syntax:
-# Name = DirObject('Name', 'location')
-
-# An example:
-# Pictures = DirObject('Pictures', 'C:\Pictures') 
-
 
 """
 Database worker instance
