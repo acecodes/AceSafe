@@ -12,15 +12,7 @@ class DB_drone:
 
             result = cursor.fetchall()
 
-            try:
-                # Delete table if it exists, then recreate it with fresh data
-                cursor.execute('''DROP TABLE {0}'''.format(table))
-                cursor.execute('''CREATE TABLE {0} (Routine TEXT PRIMARY KEY);'''.format(table))
-                print('Table {0} exists, deleting it...'.format(table))
-            except:
-                # Create the table if it doesn't exist to begin with
-                cursor.execute('''CREATE TABLE {0} (Routine TEXT PRIMARY KEY);'''.format(table))
-                print('Table {0} did not exist, created it...'.format(table))
+            cursor.execute('''CREATE TABLE {0} (Routine TEXT PRIMARY KEY);'''.format(table))
 
             # Insert name and location into database
             for items in routines:

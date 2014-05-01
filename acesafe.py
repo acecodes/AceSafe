@@ -14,6 +14,10 @@ def welcome(name=name):
     try:
         rebuild = int(input('\nWould you like to rebuild the database before you begin?\nPress 1 for yes, anything else for no:  '))
         if rebuild == 1:
+            try:
+                system("""rm routines.db""")
+            except:
+                pass
             system("""python3 my_build.py""")
         else:
             pass

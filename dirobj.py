@@ -67,7 +67,7 @@ class DirObject:
         # Once clearing and adding has completed, update existing files
         print('\nUpdating: ')
         if plat != 'win32':
-            os.system("""rsync -r -u --links --copy-unsafe-links "{0}"/* "{1}" """.format(src, dst))
+            os.system("""rsync -r -u -v --links --copy-unsafe-links "{0}"/* "{1}" """.format(src, dst))
         else:
             os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
 
