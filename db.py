@@ -30,26 +30,6 @@ class DB_drone:
             cursor.close()
             conn.close()
 
-        # Delete table from database
-        def drop(self, database, table, echo=False):
-            # Connect to the database and establish a cursor
-            conn = sqlite3.connect(database, isolation_level=None)
-            cursor = conn.cursor()
-
-            if echo == True:
-                print('Deleting table {0} from {1}...'.format(table, database))
-
-            try:
-                cursor.execute('''DROP TABLE {0}'''.format(table))
-                if echo == True:
-                    print('Deleted...')
-            except:
-                print('Table not deleted...')
-            # Commit and close connection to database
-            conn.commit()    
-            cursor.close()
-            conn.close()
-
         # Run routines from database
         def run(self, database, table):
             print('Running routine for {0}...\n'.format(table))
