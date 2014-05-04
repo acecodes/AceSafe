@@ -78,13 +78,15 @@ class DB_drone:
             conn.close()
 
             # Selection section
-            print('\nPlease select from the following routines:\n')
+            print('\nPlease select from the following routines, or press 0 to exit:\n')
 
             for numbers, items in enumerate(tables):
                 print(str(numbers+1) + '.' + ' ' + items)
 
             try:
                 choice = int(input('\nChoice: ')) - 1
+                if choice == -1:
+                    exit()
                 print('\nYou chose: ' + tables[choice] + '\n' + 'Press any key to continue...\n')
                 input()
             except IndexError:
