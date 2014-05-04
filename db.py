@@ -95,7 +95,8 @@ class DB_drone:
                 self.invalid_choice()
             except SyntaxError:
                 pass
-
+            finally:
+                pass
             # Execute the routine, then return to the main menu (even if there are problems)
             self.run("routines.db", tables[choice])
             self.create_menu(database)
