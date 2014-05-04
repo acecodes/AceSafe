@@ -53,8 +53,7 @@ class DB_drone:
 
         def invalid_choice(self):
             print('\nThat is not a valid choice. Please try again.\n')
-            input()
-            self.create_menu(database)            
+            input()        
 
         # Generates a menu for use in the command prompt/bash shell and allows a user to select a syncing routine
         def create_menu(self, database):
@@ -91,8 +90,10 @@ class DB_drone:
                 input()
             except IndexError:
                 self.invalid_choice()
+                self.create_menu(database)    
             except ValueError:
                 self.invalid_choice()
+                self.create_menu(database)    
             except SyntaxError:
                 pass
             finally:
