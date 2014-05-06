@@ -73,7 +73,12 @@ class DirObject:
 
     def routine(self, *dirobjs,**copy_args):
         for dirs in dirobjs:
-            self.copy_dirs(dirs.src, **copy_args)
+            try:
+                self.copy_dirs(dirs.src, **copy_args)
+            except FileNotFoundError:
+                print(dirs.src + ' could not be found, skipping...')
+                input()
+                continue
 
     # Warning before copying
     def copy_warn(self, dst):
