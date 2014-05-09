@@ -1,6 +1,10 @@
 # AceSafe
 # By Ace Eddleman, 2014
 
+# Compatability imports that allow usage in Python 2 & 3
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import db
 import dirobj
 from os import system
