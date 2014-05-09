@@ -7,7 +7,13 @@ from __future__ import unicode_literals
 
 import db
 import dirobj
+import os.path
 from os import system
+
+if os.path.exists('my_build.py') == True:
+    build = 'my_build.py'
+else:
+    build = 'build.py'
 
 # User name for welcome message
 name = 'User'
@@ -22,7 +28,7 @@ def welcome(name=name):
                 system("""rm routines.db""")
             except:
                 pass
-            system("""python3 my_build.py""")
+            system("""python %s""" % build)
         else:
             pass
     except ValueError:

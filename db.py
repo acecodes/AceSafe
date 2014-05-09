@@ -1,7 +1,9 @@
 import sqlite3
 from getpass import getuser
-from my_instances import *
-
+try:
+    from my_instances import *
+except ImportError:
+    from instances import *
 
 # A class specifically for database operations
 class DB_drone:
