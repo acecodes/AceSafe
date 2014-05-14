@@ -10,8 +10,10 @@ If you would like to use this script on your computer, simply open up the "insta
 
 Once you've done that, run the following at the command line:
 
-    python acesafe.py
+    python acesafe.py db
 
-And when asked whether you want to rebuild the database, press 1. This will create a "routines.db" SQLite file that contains DirObject routines you created in "build.py." Once you've done this inital build, you won't need to do it again unless you make changes to either "instances.py" or "build.py."
+This will create a "routines.db" SQLite file that contains DirObject routines you created in "build.py." Once you've done this inital build, you won't need to do it again unless you make changes to either "instances.py" or "build.py."
+
+So, for the sake of clarification, <i>once you've built your initial database file, you don't need to use the "db" command when running the script</i>. You only need to run it again if you've changed the "instances.py" or "build.py" files.
 
 A fuller explanation of why I made AceSafe and what it does can be found <a href="http://www.acecodes.net/?p=72">here</a>.
