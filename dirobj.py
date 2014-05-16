@@ -75,6 +75,10 @@ class DirObject:
         for dirs in dirobjs:
             try:
                 self.copy_dirs(dirs.src, **copy_args)
+            except KeyboardInterrupt:
+                print('You have elected to exit the program, goodbye!')
+                input()
+                exit()
             except:
                 print(dirs.src + ' raised an error, skipping...')
                 input()

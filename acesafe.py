@@ -18,13 +18,25 @@ else:
 # User name for welcome message
 name = 'User'
 
-# Arguments
-if 'db' in argv:
+# Command-line arguments
+
+# Rebuild database
+if argv[1] == 'db':
     try:
         system("""rm routines.db""")
     except:
         pass
     system("""python %s""" % build)
+
+# Run a specific routine, bypassing menu system
+
+# Collect arguments in case user wants to run more than one
+run_args = argv[2:]
+
+if argv[1] == 'run':
+    for args in run_args:
+        db.DB.run('routines.db', args)
+
 
 # Welcome message
 def welcome(name=name):
