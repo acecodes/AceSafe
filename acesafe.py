@@ -39,6 +39,7 @@ run_args = argv[2:]
 if argv[1] == 'run':
     for args in run_args:
         db.DB.run('routines.db', args)
+    exit()
 
 
 # Welcome message
