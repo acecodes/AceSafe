@@ -75,8 +75,8 @@ class DirObject:
         for dirs in dirobjs:
             try:
                 self.copy_dirs(dirs.src, **copy_args)
-            except FileNotFoundError:
-                print(dirs.src + ' could not be found, skipping...')
+            except:
+                print(dirs.src + ' raised an error, skipping...')
                 input()
                 continue
 
