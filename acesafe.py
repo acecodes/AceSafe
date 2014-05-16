@@ -18,7 +18,9 @@ else:
 # User name for welcome message
 name = 'User'
 
-# Command-line arguments
+"""
+Command-line arguments
+"""
 
 # Rebuild database
 if argv[1] == 'db':
@@ -31,6 +33,7 @@ if argv[1] == 'db':
 # Run a specific routine, bypassing menu system
 
 # Collect arguments in case user wants to run more than one
+# This option skips the menu entirely
 run_args = argv[2:]
 
 if argv[1] == 'run':
