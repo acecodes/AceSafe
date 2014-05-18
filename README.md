@@ -30,13 +30,13 @@ If you'd prefer to just run a single routine (or a set of routines at once), you
 
 You will still have to run the <code>db</code> command mentioned above, but once you've done that, you can send commands straight to the script via the database. To accomplish this, you need to use the <code>run</code> argument when invoking the script. For example:
 
-    python acesafe.py Dropbox
+    python acesafe.py run Dropbox
     
 This would look for a database table called <code>Dropbox</code> (specified in the <code>build.py</code> file) and run a routine using DirObjects you created in the <code>instances.py</code> file.
 
 You can also run multiple routines at once. For example:
 
-    python acesafe.py Dropbox ExtHD1 ExtHD2
+    python acesafe.py run Dropbox ExtHD1 ExtHD2
     
 This would run the routines <code>Dropbox</code>, <code>ExtHD1</code> and <code>ExtHD2</code> back-to-back.
 
