@@ -41,6 +41,18 @@ if argv[1] == 'run':
         db.DB.run('routines.db', args)
     exit()
 
+if argv[1] == 'view-routines':
+    print('\nYour currently accessible routines:\n')
+    for items in db.DB.create_menu("routines.db", just_view=True):
+        print(items)
+    print('\nIf you would like to run these without the menu system, use the "run" argument')
+    exit()
+
+if argv[1] == 'help':
+    print('\n')
+    print('Arguments available for AceSafe:\nrun - Run a specific routine, i.e. "python acesafe.py run Dropbox"\nview-routines - View currently accessible routines in your database file')
+    print('\n')
+    exit()
 
 # Welcome message
 def welcome(name=name):

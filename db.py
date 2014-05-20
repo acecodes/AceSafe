@@ -58,7 +58,7 @@ class DB_drone:
             input()        
 
         # Generates a menu for use in the command prompt/bash shell and allows a user to select a syncing routine
-        def create_menu(self, database):
+        def create_menu(self, database, just_view=False):
             # Connect to the database and establish a cursor
             conn = sqlite3.connect(database, isolation_level=None)
             cursor = conn.cursor()
@@ -77,6 +77,9 @@ class DB_drone:
             conn.commit()    
             cursor.close()
             conn.close()
+
+            if just_view == True:
+                return tables
 
             # Selection section
             print('\nPlease select from the following routines, or press 0 to exit:\n')
