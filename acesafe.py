@@ -5,10 +5,10 @@
 from __future__ import print_function
 
 import db
-import dirobj
 import os.path
 from os import system
 from sys import argv
+from dirobj import DirObject
 
 if os.path.exists('my_build.py') == True:
     build = 'my_build.py'
@@ -53,6 +53,18 @@ if argv[1] == 'help':
     print('Arguments available for AceSafe:\nrun - Run a specific routine, i.e. "python acesafe.py run Dropbox"\nview-routines - View currently accessible routines in your database file')
     print('\n')
     exit()
+
+if argv[1] == 'dirs':
+    src = DirObject('source', argv[2])
+    dst = DirObject('destination', argv[3])
+    print('\nCopying files from {0} to {1}...'.format(src.src, dst.src))
+    try:
+        input()
+    except SyntaxError:
+        pass
+    src.copy_dirs(dst.src)
+    exit()
+
 
 # Welcome message
 def welcome(name=name):
