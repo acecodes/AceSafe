@@ -50,7 +50,7 @@ if argv[1] == 'view-routines':
 
 if argv[1] == 'help':
     print('\n')
-    print('Arguments available for AceSafe:\nrun - Run a specific routine, i.e. "python acesafe.py run Dropbox"\nview-routines - View currently accessible routines in your database file')
+    print('Arguments available for AceSafe:\nrun - Run a specific routine, i.e. "python acesafe.py run Dropbox"\nview-routines - View currently accessible routines in your database file\ndirs - Do a quick and dirty comparison between two directories (syntax is dirs "<source>"" "<destination>"')
     print('\n')
     exit()
 
