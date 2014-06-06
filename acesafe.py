@@ -46,9 +46,13 @@ if argv[1] == 'run-sleep':
         db.DB.run('routines.db', args)
     print("Routines completed, going to sleep...")
     if platform == 'win32':
-        system("sleep")
+        pass
+        # Not implemented for Windows platforms yet
     else:
-        system("sudo pm-suspend")
+        try:
+            system("sudo pm-suspend")
+        except:
+            print("\nThe suspend command is not supported by your operating system.\n")
     exit()
 
 if argv[1] == 'view-routines':
