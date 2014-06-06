@@ -54,6 +54,8 @@ You can also use the <code>help</code> argument in case you forgot which command
 
     python acesafe.py help
 
+If you'd like to run a routine and then have your computer go to sleep, use <code>run-sleep</code> instead of the standard <code>run</code> command.
+
 ## Find out more
 
 A fuller explanation of why I made AceSafe and what it does can be found [here][1].

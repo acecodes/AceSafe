@@ -7,7 +7,7 @@ from __future__ import print_function
 import db
 import os.path
 from os import system
-from sys import argv
+from sys import argv, platform
 from dirobj import DirObject
 
 if os.path.exists('my_build.py') == True:
@@ -39,6 +39,16 @@ run_args = argv[2:]
 if argv[1] == 'run':
     for args in run_args:
         db.DB.run('routines.db', args)
+    exit()
+
+if argv[1] == 'run-sleep':
+    for args in run_args:
+        db.DB.run('routines.db', args)
+    print("Routines completed, going to sleep...")
+    if platform == 'win32':
+        system("sleep")
+    else:
+        system("sudo pm-suspend")
     exit()
 
 if argv[1] == 'view-routines':
