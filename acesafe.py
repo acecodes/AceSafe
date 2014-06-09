@@ -29,6 +29,7 @@ if argv[1] == 'db':
     except:
         pass
     system("""python %s""" % build)
+    exit()
 
 # Run a specific routine, bypassing menu system
 
