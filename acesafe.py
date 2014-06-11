@@ -73,7 +73,7 @@ if argv[1] == 'dirs':
     src = DirObject('source', argv[2])
     dst = DirObject('destination', argv[3])
     if os.path.exists(argv[2]) and os.path.exists(argv[3]):
-        print('\nCopying files from {0} to {1}...'.format(src.src, dst.src))
+        print('\nCopying files from {0} to {1} - press any key to continue...'.format(src.src, dst.src))
         try:
             input()
         except SyntaxError:
