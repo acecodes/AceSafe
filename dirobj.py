@@ -137,8 +137,6 @@ class DirObject:
             zipper.close()
 
 
-
-
 """
 Object factory
 """
