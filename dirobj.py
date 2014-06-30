@@ -89,7 +89,11 @@ class DirObject:
                     exit()
             else:
                 print("\nThis directory does not exist: {0}\nContinuing in 5 seconds...\n".format(dirs))
+<<<<<<< HEAD
                 dir_errors.append(dirs.src)
+=======
+                errors.append(dirs.src)
+>>>>>>> 7b7adf1dd2f12db8abbf6d1cb08f0d82833514b8
                 sleep(5)
                 continue
 
