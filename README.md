@@ -20,7 +20,7 @@ So, for the sake of clarification, <i>once you've built your initial database fi
 
 Now all you have to do is run the script with Python:
 
-    python acesafe.py
+    python acesafe.py menu
     
 This will generate a menu system based on the routines you created in the <code>build.py</code> file.
     
