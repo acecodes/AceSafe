@@ -111,15 +111,12 @@ if argv[1] == 'view-routines':
     print('\nIf you would like to run these without the menu system, use the "run" argument')
     exit()
 
-<<<<<<< HEAD
-=======
 if argv[1] == 'help':
     print('\n')
     print('Arguments available for AceSafe:\nrun - Run a specific routine, i.e. "python acesafe.py run Dropbox"\nview-routines - View currently accessible routines in your database file\ndirs - Do a quick and dirty comparison between two directories (syntax is dirs "<source>"" "<destination>"')
     print('\n')
     exit()
 
->>>>>>> 7b7adf1dd2f12db8abbf6d1cb08f0d82833514b8
 if argv[1] == 'dirs':
     src = DirObject('source', argv[2])
     dst = DirObject('destination', argv[3])
