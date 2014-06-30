@@ -3,6 +3,8 @@ import filecmp
 import shutil
 import zipfile
 import sys
+from os.path import exists
+from time import sleep
 
 plat = sys.platform
 
@@ -40,8 +42,10 @@ class DirObject:
         print('\nSource: %s' % src)
         print('Destination: %s\n' % dst)
         for src_root, src_dirs, src_files in os.walk(src, topdown=True):
+            
             dst_root = os.path.join(dst, os.path.relpath(src_root, src))
             dirs = filecmp.dircmp(src_root, dst_root)
+
             # Find old files and delete them from destination
             for item in dirs.right_only:
                 try:
@@ -53,6 +57,7 @@ class DirObject:
                     shutil.rmtree(dst_path)
                 else:
                     os.remove(dst_path)
+
             # Find new files and add them to destination
             for item in dirs.left_only:
                 try:
@@ -72,17 +77,28 @@ class DirObject:
             os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
 
     def routine(self, *dirobjs,**copy_args):
+        # List for collecting directories that have issues
+        dir_errors = []
+        
         for dirs in dirobjs:
-            try:
-                self.copy_dirs(dirs.src, **copy_args)
-            except KeyboardInterrupt:
-                print('You have elected to exit the program, goodbye!')
-                input()
-                exit()
-            except:
-                print(dirs.src + ' raised an error, skipping...')
-                input()
+            if exists(dirs.src):
+                try:
+                    self.copy_dirs(dirs.src, **copy_args)
+                except KeyboardInterrupt:
+                    print('You have elected to exit the program, goodbye!')
+                    exit()
+            else:
+                print("\nThis directory does not exist: {0}\nContinuing in 5 seconds...\n".format(dirs))
+                dir_errors.append(dirs.src)
+                sleep(5)
                 continue
+
+        # Display directory errors if any occurred during the routine
+        if dir_errors:
+            print('\nThese directories experienced issues:\n')
+            for dirs in dir_errors:
+                print(dirs)
+            print('\n')
 
     # Warning before copying
     def copy_warn(self, dst):
@@ -119,8 +135,6 @@ class DirObject:
             sys.exit(1)
         finally:
             zipper.close()
-
-
 
 
 """

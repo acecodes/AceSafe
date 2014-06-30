@@ -1,12 +1,12 @@
 # AceSafe
 
-This is the script I built out of the carcass of my horrendously unfashionable batch file system. The primary purpose of this program is to send files that are valued the most to your various backup sources. The script first builds some objects that each correspond with a path on the user's hard drive. Then each path is turned into an class object and customized so that their files can be manipulated with copying methods. Once that is done, the program builds a database file that consists of several tables, with each table containing syncing routines.
+This is a program I built out of the carcass of my horrendously unfashionable batch file backup system. The primary purpose of this program is to send files that are valued the most to your various backup sources. First, AceSafe builds some objects that each correspond with a path on the user's hard drive. Then each path is turned into an class object and customized so that their files can be manipulated with copying methods. Once that is done, the program builds a database file that consists of several tables, with each table containing syncing routines.
 
 The most powerful feature of this program is its copying method, which checks the source directory (defined in the <code>DirObject</code>'s <code>__init__</code>) and then compares its contents to the contents of the destination directory. If there are files that exist only in the destination, they will be deleted. Then new and updated files are copied over. This process ensures a 1-to-1 sync between files and their backups, with no extra files lingering on forever because file names or paths have been changed.
 
 AceSafe has saved me boatloads of time, particularly with the addition of the "check and delete" feature. I used to have to manually delete files every time I changed a filename or something, otherwise I would end up with copies of the same files that only differed in filenames. For example, if I had a file called "readme_old.txt" and then renamed it "readme_new.txt", I would end up with both files. Now, only the "readme_new.txt" will remain.
 
-# Instructions
+## Instructions
 
 If you would like to use this script on your computer, simply open up the <code>instances.py</code> and <code>build.py</code> files in an editor and follow the instructions I've left in the comments.
 
@@ -24,7 +24,7 @@ Now all you have to do is run the script with Python:
     
 This will generate a menu system based on the routines you created in the <code>build.py</code> file.
     
-# Command-line use
+## Command-line use
 
 If you'd prefer to just run a single routine (or a set of routines at once), you can now (as of 5/16/2014) use the command line to skip the menu system.
 
@@ -40,6 +40,25 @@ You can also run multiple routines at once. For example:
     
 This would run the routines <code>Dropbox</code>, <code>ExtHD1</code> and <code>ExtHD2</code> back-to-back.
 
-# Find out more
+You can also just do a quick and dirty comparison between two directories without utilizing a menu system or database file. This can be accomplished using the <code>dirs</code> like so:
 
-A fuller explanation of why I made AceSafe and what it does can be found <a href="http://www.acecodes.net/?p=72">here</a>.
+    python acesafe.py dirs "<source>" "<destination>"
+
+For example:
+    
+    python acesafe.py dirs "/home/user/downloads" "/home/user/files"
+    
+For now, this feature only supports comparisons between two directories, but the ability to string together destinations for comparison is in the works.
+
+You can also use the <code>help</code> argument in case you forgot which commands do what.
+
+    python acesafe.py help
+
+If you'd like to run a routine and then have your computer go to sleep, use <code>run-sleep</code> instead of the standard <code>run</code> command.
+
+## Find out more
+
+A fuller explanation of why I made AceSafe and what it does can be found [here][1].
+
+
+  [1]: http://www.acecodes.net/?p=72
