@@ -221,3 +221,4 @@ testing/*.*
 my_build.py
 my_build_win.py
 my_instances.py
+*.sh

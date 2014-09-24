@@ -79,21 +79,7 @@ if argv[1] == 'run':
 if argv[1] == 'run-sleep':
     for argv[1] in run_args:
         db.DB.run('routines.db', argv[1])
-    print("Routines completed, going to sleep...")
-    if platform == 'win32':
-        pass
-        # Not implemented for Windows platforms yet
-    else:
-        try:
-            system("sudo pm-suspend")
-        except:
-            print("\nThe suspend command is not supported by your operating system.\n")
-    exit()
-
-if argv[1] == 'run-sleep':
-    for args in run_args:
-        db.DB.run('routines.db', args)
-    print("Routines completed, going to sleep...")
+    print("\nRoutines completed, going to sleep...")
     if platform == 'win32':
         pass
         # Not implemented for Windows platforms yet
@@ -112,9 +98,7 @@ if argv[1] == 'view-routines':
     exit()
 
 if argv[1] == 'help':
-    print('\n')
-    print('Arguments available for AceSafe:\nrun - Run a specific routine, i.e. "python acesafe.py run Dropbox"\nview-routines - View currently accessible routines in your database file\ndirs - Do a quick and dirty comparison between two directories (syntax is dirs "<source>"" "<destination>"')
-    print('\n')
+    print('\nArguments available for AceSafe:\nrun - Run a specific routine, i.e. "python acesafe.py run Dropbox"\nview-routines - View currently accessible routines in your database file\ndirs - Do a quick and dirty comparison between two directories (syntax is dirs "<source>"" "<destination>"\n')
     exit()
 
 if argv[1] == 'dirs':
@@ -128,8 +112,11 @@ if argv[1] == 'dirs':
             pass
         src.copy_dirs(dst.src)
     else:
-        print('Those paths are invalid, please try again.')
+        print('\nThose paths are invalid, please try again.\n')
     exit()
+
+if argv[4]:
+    pass
 
 if argv[1] == 'menu':
     welcome()

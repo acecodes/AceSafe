@@ -34,7 +34,7 @@ class DB_drone:
 
         # Run routines from database
         def run(self, database, table):
-            print('Running routine for {0}...\n'.format(table))
+            print('\nRunning routine for {0}...\n'.format(table))
             # Connect to the database and establish a cursor
             conn = sqlite3.connect(database, isolation_level=None)
             cursor = conn.cursor()

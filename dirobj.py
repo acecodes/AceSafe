@@ -85,7 +85,7 @@ class DirObject:
                 try:
                     self.copy_dirs(dirs.src, **copy_args)
                 except KeyboardInterrupt:
-                    print('You have elected to exit the program, goodbye!')
+                    print('\nYou have elected to exit the program, goodbye!\n')
                     exit()
             else:
                 print("\nThis directory does not exist: {0}\nContinuing in 5 seconds...\n".format(dirs))
