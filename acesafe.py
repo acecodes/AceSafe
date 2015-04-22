@@ -9,6 +9,7 @@ import os.path
 from os import system
 from sys import argv, platform
 from dirobj import DirObject
+from json_functions import JSONRunner
 
 if os.path.exists('my_build.py') == True:
     build = 'my_build.py'
