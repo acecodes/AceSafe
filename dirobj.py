@@ -8,26 +8,33 @@ from time import sleep
 
 plat = sys.platform
 
+
 class DirObject:
+
     """
     A directory object that represents a location on the hard drive.
-    The argument 'src' represents that location and is required for all instances.
+    The argument 'src' represents that location and is required
+    for all instances.
     """
 
     def __init__(self, name, src):
         self.name = name
         self.src = src
-        # self.db_source_insert() - Disabled until I reinstate database functionality
+        # self.db_source_insert() - Disabled until I reinstate database
+        # functionality
 
     def __str__(self):
         return self.src
 
     def __dict__(self):
-        return dict({self.name:self.dst})
+        return dict({self.name: self.dst})
 
-    # A big thank you goes out to Pi Marillion (on StackOverflow) for helping me work out the mechanics of this method
+    # A big thank you goes out to Pi Marillion (on StackOverflow) for helping
+    # me work out the mechanics of this method
     def copy_dirs(self, dst, subs='', src_sub='', dst_sub=''):
-        """Searches for and deletes files not found in the source, then copies any new files to the destination
+        """
+        Searches for and deletes files not found in the source,
+        then copies any new files to the destination
         """
         # Join paths (if specified)
         src = self.src
@@ -42,7 +49,7 @@ class DirObject:
         print('\nSource: %s' % src)
         print('Destination: %s\n' % dst)
         for src_root, src_dirs, src_files in os.walk(src, topdown=True):
-            
+
             dst_root = os.path.join(dst, os.path.relpath(src_root, src))
             dirs = filecmp.dircmp(src_root, dst_root)
 
@@ -51,7 +58,9 @@ class DirObject:
                 try:
                     print('Removing ' + item)
                 except UnicodeEncodeError:
-                    print('Removing file (Unicode error)') # Prevents the program from stopping in the event of an awkward file name
+                    # Prevents the program from stopping in the event of an
+                    # awkward file name
+                    print('Removing file (Unicode error)')
                 dst_path = os.path.join(dst_root, item)
                 if os.path.isdir(dst_path):
                     shutil.rmtree(dst_path)
@@ -63,23 +72,27 @@ class DirObject:
                 try:
                     print('Adding ' + item)
                 except UnicodeEncodeError:
-                    print('Adding file (Unicode error)') # Prevents the program from stopping in the event of an awkward file name
+                    # Prevents the program from stopping in the event of an
+                    # awkward file name
+                    print('Adding file (Unicode error)')
                 src_path = os.path.join(src_root, item)
                 if os.path.isdir(src_path):
                     shutil.copytree(src_path, os.path.join(dst_root, item))
                 else:
                     shutil.copy2(src_path, os.path.join(dst_root, item))
+
         # Once clearing and adding has completed, update existing files
         print('\nUpdating: ')
         if plat != 'win32':
-            os.system("""rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst))
+            os.system(
+                """rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst))
         else:
             os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
 
-    def routine(self, *dirobjs,**copy_args):
+    def routine(self, *dirobjs, **copy_args):
         # List for collecting directories that have issues
         dir_errors = []
-        
+
         for dirs in dirobjs:
             if exists(dirs.src):
                 try:
@@ -88,7 +101,8 @@ class DirObject:
                     print('\nYou have elected to exit the program, goodbye!\n')
                     exit()
             else:
-                print("\nThis directory does not exist: {0}\nContinuing in 5 seconds...\n".format(dirs))
+                print(
+                    "\nThis directory does not exist: {0}\nContinuing in 5 seconds...\n".format(dirs))
                 dir_errors.append(dirs.src)
                 sleep(5)
                 continue
@@ -121,7 +135,8 @@ class DirObject:
                 for folder_name in folders:
                     absolute_path = os.path.join(root, folder_name)
                     relative_path = absolute_path.replace(parent + '\\', '')
-                    print('Adding contents of %s to %s...' % (absolute_path, dst))
+                    print('Adding contents of %s to %s...' %
+                          (absolute_path, dst))
                 for file_name in files:
                     absolute_path = os.path.join(root, file_name)
                     relative_path = absolute_path.replace(parent + '\\', '')
@@ -135,10 +150,3 @@ class DirObject:
             sys.exit(1)
         finally:
             zipper.close()
-
-
-"""
-Object factory
-"""
-def factory(Parent_Class, *pargs, **kargs):
-       return Parent_Class(*pargs, **kargs)

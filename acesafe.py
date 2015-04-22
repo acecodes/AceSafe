@@ -18,8 +18,9 @@ else:
 # User name for welcome message
 name = 'User'
 
-# Welcome message
+
 def welcome(name=name):
+    """Welcome message"""
     print('\nWelcome to your file management program, {0}!'.format(name))
 
 """
@@ -30,7 +31,7 @@ help_text = """
         Arguments available for AceSafe:
 
         run - Run a specific routine, i.e. "python acesafe.py run Dropbox"
-        view-routines - View currently accessible routines in your database file
+        view-routines - View routines in your database file
         dirs - Takes two dirs (source and destination) and runs a comparison
         menu - Creates a numbered menu out of your routines
 
@@ -46,7 +47,7 @@ help_text = """
 
         AceSafe runs in both Python 2.x and 3.x
 
-        Visit www.acecodes.net or github.com/acecodes/acesafe 
+        Visit www.acecodes.net or github.com/acecodes/acesafe
         for more information.
         """
 
@@ -87,25 +88,40 @@ if argv[1] == 'run-sleep':
         try:
             system("sudo pm-suspend")
         except:
-            print("\nThe suspend command is not supported by your operating system.\n")
+            print(
+                "\nThe suspend command is not supported by your OS.\n")
     exit()
 
 if argv[1] == 'view-routines':
     print('\nYour currently accessible routines:\n')
     for items in db.DB.create_menu("routines.db", just_view=True):
         print(items)
-    print('\nIf you would like to run these without the menu system, use the "run" argument')
+    print(
+        """
+        \n
+        If you would like to run these without the
+        menu system, use the "run" argument
+        """)
     exit()
 
 if argv[1] == 'help':
-    print('\nArguments available for AceSafe:\nrun - Run a specific routine, i.e. "python acesafe.py run Dropbox"\nview-routines - View currently accessible routines in your database file\ndirs - Do a quick and dirty comparison between two directories (syntax is dirs "<source>"" "<destination>"\n')
+    print(
+        """
+        \nArguments available for AceSafe:\nrun - Run a specific routine,
+        i.e. "python acesafe.py run Dropbox"
+        \nview-routines - View routines in your database file
+        \ndirs - Do a quick and dirty comparison between two directories
+        (syntax is dirs "<source>" "<destination>")
+        \n
+        """)
     exit()
 
 if argv[1] == 'dirs':
     src = DirObject('source', argv[2])
     dst = DirObject('destination', argv[3])
     if os.path.exists(argv[2]) and os.path.exists(argv[3]):
-        print('\nCopying files from {0} to {1} - press any key to continue...'.format(src.src, dst.src))
+        print(
+            '\nCopying files from {0} to {1} - press any key to continue...'.format(src.src, dst.src))
         try:
             input()
         except SyntaxError:
