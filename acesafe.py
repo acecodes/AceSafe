@@ -98,21 +98,8 @@ if argv[1] == 'view-routines':
         print(items)
     print(
         """
-        \n
         If you would like to run these without the
         menu system, use the "run" argument
-        """)
-    exit()
-
-if argv[1] == 'help':
-    print(
-        """
-        \nArguments available for AceSafe:\nrun - Run a specific routine,
-        i.e. "python acesafe.py run Dropbox"
-        \nview-routines - View routines in your database file
-        \ndirs - Do a quick and dirty comparison between two directories
-        (syntax is dirs "<source>" "<destination>")
-        \n
         """)
     exit()
 
@@ -130,9 +117,6 @@ if argv[1] == 'dirs':
     else:
         print('\nThose paths are invalid, please try again.\n')
     exit()
-
-if argv[4]:
-    pass
 
 if argv[1] == 'menu':
     welcome()
