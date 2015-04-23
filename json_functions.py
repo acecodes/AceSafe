@@ -3,7 +3,6 @@ import os
 import filecmp
 import shutil
 import sys
-from os.path import exists
 from time import sleep
 
 plat = sys.platform
@@ -78,44 +77,48 @@ class JSONRunner:
     @staticmethod
     def routine(JSON_source, routine):
         """Run a backup routine from a JSON file"""
+        try:
+            # List for collecting troublesome directories
+            dir_errors = []
 
-        # List for collection troublesome directories
-        dir_errors = []
+            with open(JSON_source + '.json') as data_file:
+                dir_obj = json.load(data_file)
 
-        with open(JSON_source + '.json') as data_file:
-            dir_obj = json.load(data_file)
+            base = dir_obj['routines'][routine]['setup']['baseDirectory']
 
-        base = dir_obj['Routines'][routine]['Setup']['Base Directory']
+            for key, value in dir_obj['routines'][routine].items():
+                try:
+                    if key is not 'setup':
+                        dest = dir_obj['routines'][routine][key]
+                        if type(dest) is not dict:
+                            print(dir_obj['locations'][dest])
+                            JSONRunner.copy_dirs(
+                                dir_obj['locations'][base],
+                                dir_obj['locations'][dest]
+                            )
+                except KeyboardInterrupt:
+                    print('\nYou have elected to exit the program, goodbye!\n')
+                    exit()
+                except KeyError:
+                    print('Your JSON contains an incorrect key: {0}'.format(value))
+                    dir_errors.append(dest)
+                    sleep(5)
+                    continue
+                except OSError:
+                    print("""This directory does not exist: {0}
+                    \nContinuing in 5 seconds...\n
+                    """.format(dest))
+                    dir_errors.append(dest)
+                    sleep(5)
+                    continue
 
-        for key, value in dir_obj['Routines'][routine].items():
-            try:
-                if key is not 'Setup':
-                    dest = dir_obj['Routines'][routine][key]
-                    if type(dest) is not dict:
-                        print(dir_obj['Locations'][dest])
-                        JSONRunner.copy_dirs(
-                            dir_obj['Locations'][base],
-                            dir_obj['Locations'][dest]
-                        )
-            except KeyboardInterrupt:
-                print('\nYou have elected to exit the program, goodbye!\n')
-                exit()
-            except KeyError:
-                print('Your JSON contains an incorrect key: {0}'.format(value))
-                dir_errors.append(dest)
-                sleep(5)
-                continue
-            except OSError:
-                print("""This directory does not exist: {0}
-                \nContinuing in 5 seconds...\n
-                """.format(dest))
-                dir_errors.append(dest)
-                sleep(5)
-                continue
+            if len(dir_errors) > 0:
+                print('\nThese directories experienced errors:')
+                for i in dir_errors:
+                    print(i)
+        except KeyError:
+            print('That routine does not exist. Please try again.')
+        except IOError:
+            print('That JSON file is invalid. Please try again.')
 
-        if len(dir_errors) > 0:
-            print('\nThese directories experienced errors:')
-            for i in dir_errors:
-                print(i)
-
-print(JSONRunner.routine('test_json', 'Test'))
+print(JSONRunner.routine('test_json', 'test'))
