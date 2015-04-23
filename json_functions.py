@@ -76,7 +76,10 @@ class JSONRunner:
 
     @staticmethod
     def routine(JSON_source, routine):
-        """Run a backup routine from a JSON file"""
+        """
+        Run a backup routine from a JSON file
+        Keep in mind that subdirectories MUST exist ahead of time!
+        """
         try:
             # List for collecting troublesome directories
             dir_errors = []
@@ -93,21 +96,25 @@ class JSONRunner:
                         if type(dest) is not dict:
                             src = dir_obj['locations'][base]
                             dst = dir_obj['locations'][dest]
-                            if len(dir_obj['routines'][routine]['setup']['srcSub']) > 0:
+                            try:
                                 src_sub = dir_obj['routines'][routine]['setup']['srcSub']
                                 src = src + '/' + src_sub
-                                print(src_sub)
-                            if len(dir_obj['routines'][routine]['setup']['dstSub']) > 0:
+                            except KeyError as e:
+                                """No srcSub specified"""
+                                pass
+                            try:
                                 dst_sub = dir_obj['routines'][routine]['setup']['dstSub']
                                 dst = dst + '/' + dst_sub
-                                print(dst_sub)
+                            except KeyError as e:
+                                """No dstSub specified"""
+                                pass
                             JSONRunner.copy_dirs(src, dst)
                 except KeyboardInterrupt:
                     print('\nYou have elected to exit the program, goodbye!\n')
                     exit()
                 except KeyError:
                     print('Your JSON contains an incorrect key: {0}'.format(dest))
-                    dir_errors.append(dest)
+                    dir_errors.append(dst)
                     sleep(5)
                     continue
                 except OSError:
@@ -127,4 +134,4 @@ class JSONRunner:
         except IOError:
             print('That JSON file is invalid. Please try again.')
 
-print(JSONRunner.routine('test_json', 'test'))
+JSONRunner.routine('test_json', 'dev')
