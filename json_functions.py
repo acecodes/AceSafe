@@ -91,24 +91,30 @@ class JSONRunner:
                     if key is not 'setup':
                         dest = dir_obj['routines'][routine][key]
                         if type(dest) is not dict:
-                            print(dir_obj['locations'][dest])
-                            JSONRunner.copy_dirs(
-                                dir_obj['locations'][base],
-                                dir_obj['locations'][dest]
-                            )
+                            src = dir_obj['locations'][base]
+                            dst = dir_obj['locations'][dest]
+                            if len(dir_obj['routines'][routine]['setup']['srcSub']) > 0:
+                                src_sub = dir_obj['routines'][routine]['setup']['srcSub']
+                                src = src + '/' + src_sub
+                                print(src_sub)
+                            if len(dir_obj['routines'][routine]['setup']['dstSub']) > 0:
+                                dst_sub = dir_obj['routines'][routine]['setup']['dstSub']
+                                dst = dst + '/' + dst_sub
+                                print(dst_sub)
+                            JSONRunner.copy_dirs(src, dst)
                 except KeyboardInterrupt:
                     print('\nYou have elected to exit the program, goodbye!\n')
                     exit()
                 except KeyError:
-                    print('Your JSON contains an incorrect key: {0}'.format(value))
+                    print('Your JSON contains an incorrect key: {0}'.format(dest))
                     dir_errors.append(dest)
                     sleep(5)
                     continue
                 except OSError:
                     print("""This directory does not exist: {0}
                     \nContinuing in 5 seconds...\n
-                    """.format(dest))
-                    dir_errors.append(dest)
+                    """.format(dst))
+                    dir_errors.append(dst)
                     sleep(5)
                     continue
 
