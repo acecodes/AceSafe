@@ -133,5 +133,3 @@ class JSONRunner:
             print('That routine does not exist. Please try again.')
         except IOError:
             print('That JSON file is invalid. Please try again.')
-
-JSONRunner.routine('test_json', 'dev')
