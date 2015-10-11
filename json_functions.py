@@ -75,61 +75,33 @@ class JSONRunner:
         input()
 
     @staticmethod
-    def routine(JSON_source, routine):
+    def routine(JSON_Source, routine):
         """
         Run a backup routine from a JSON file
         Keep in mind that subdirectories MUST exist ahead of time!
+        Use absolute paths in your JSON file - don't use ~/
         """
+
         try:
-            # List for collecting troublesome directories
+
             dir_errors = []
 
-            with open(JSON_source + '.json') as data_file:
+            with open(JSON_Source + '.json') as data_file:
                 dir_obj = json.load(data_file)
 
-            base = dir_obj['routines'][routine]['setup']['baseDirectory']
+            src = dir_obj[routine]['src']
+            dst = dir_obj[routine]['dst']
 
-            for key, value in dir_obj['routines'][routine].items():
-                try:
-                    if key is not 'setup':
-                        dest = dir_obj['routines'][routine][key]
-                        if type(dest) is not dict:
-                            src = dir_obj['locations'][base]
-                            dst = dir_obj['locations'][dest]
-                            try:
-                                src_sub = dir_obj['routines'][routine]['setup']['srcSub']
-                                src = src + '/' + src_sub
-                            except KeyError:
-                                """No srcSub specified"""
-                                pass
-                            try:
-                                dst_sub = dir_obj['routines'][routine]['setup']['dstSub']
-                                dst = dst + '/' + dst_sub
-                            except KeyError:
-                                """No dstSub specified"""
-                                pass
-                            JSONRunner.copy_dirs(src, dst)
-                except KeyboardInterrupt:
+            JSONRunner.copy_dirs(src, dst)
+
+        except KeyboardInterrupt:
                     print('\nYou have elected to exit the program, goodbye!\n')
                     exit()
-                except KeyError:
-                    print('Your JSON contains an incorrect key: {0}'.format(dest))
-                    dir_errors.append(dst)
-                    sleep(5)
-                    continue
-                except OSError:
-                    print("""This directory does not exist: {0}
-                    \nContinuing in 5 seconds...\n
-                    """.format(dst))
-                    dir_errors.append(dst)
-                    sleep(5)
-                    continue
-
-            if len(dir_errors) > 0:
-                print('\nThese directories experienced errors:')
-                for i in dir_errors:
-                    print(i)
         except KeyError:
             print('That routine does not exist. Please try again.')
         except IOError:
             print('That JSON file is invalid. Please try again.')
+        if len(dir_errors) > 0:
+            print('\nThese directories experienced errors:')
+            for i in dir_errors:
+                print(i)

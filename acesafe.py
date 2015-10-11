@@ -53,8 +53,8 @@ if argv[1] == 'view-routines':
     with open(json_file + '.json') as data_file:
         json_routines = json.load(data_file)
     print("\nCurrently available routines:\n")
-    for keys in json_routines['routines'].items():
-        print(keys[0], ' - ', keys[1]['setup']['description'])
+    for i in json_routines.keys():
+        print(i)
     print()
     exit()
 
