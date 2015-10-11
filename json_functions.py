@@ -11,7 +11,7 @@ plat = sys.platform
 class JSONRunner:
 
     @staticmethod
-    def copy_dirs(src, dst, subs='', src_sub='', dst_sub=''):
+    def copy_dirs(src, dst, subs=None, src_sub=None, dst_sub=None):
         """
         Searches for and deletes files not found in the source,
         then copies any new files to the destination
@@ -99,13 +99,13 @@ class JSONRunner:
                             try:
                                 src_sub = dir_obj['routines'][routine]['setup']['srcSub']
                                 src = src + '/' + src_sub
-                            except KeyError as e:
+                            except KeyError:
                                 """No srcSub specified"""
                                 pass
                             try:
                                 dst_sub = dir_obj['routines'][routine]['setup']['dstSub']
                                 dst = dst + '/' + dst_sub
-                            except KeyError as e:
+                            except KeyError:
                                 """No dstSub specified"""
                                 pass
                             JSONRunner.copy_dirs(src, dst)

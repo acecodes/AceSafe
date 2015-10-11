@@ -22,7 +22,10 @@ help_text = """
         Arguments available for AceSafe:
 
         run - Run a specific routine, i.e. "python acesafe.py run Dropbox"
-        view-routines - View routines in your database file
+        view-routines - View routines in your JSON file
+
+        compare - Compare two directories without using a JSON file
+        Syntax: compare {source} {destination}
 
         This program runs with a JSON file, which by default is test_json.json.
         If you want a different JSON file to be used, create it, place it in
@@ -53,4 +56,10 @@ if argv[1] == 'view-routines':
     for keys in json_routines['routines'].items():
         print(keys[0], ' - ', keys[1]['setup']['description'])
     print()
+    exit()
+
+if argv[1] == 'compare':
+    src = argv[2]
+    dst = argv[3]
+    JSONRunner.copy_dirs(src, dst)
     exit()
