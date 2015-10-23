@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # AceSafe
 # By Ace Eddleman, 2014
 
