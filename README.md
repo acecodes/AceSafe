@@ -9,34 +9,18 @@ AceSafe has saved me boatloads of time, particularly with the addition of the "c
 
 ## Instructions
 
-The first step is to open up the <code>test_json.json</code> file. You'll see that some sample entries for directories and routines have already been filled in. Here is a layout of the file itself and some additional instructions:
+The first step is to open up the <code>test_json.json</code> file. You'll see that there's a sample routine setup for your benefit.
 
+    
     {
-      "locations": {
-       # These are base directories
-        "test1": "/home/username/tmp/test1",
-        "test2": "/home/username/tmp/test2",
-        "test3": "/home/username/tmp/test3"
-      },
-      "routines": {
-      # This is a routine
-        "test": {
-        # Here you define critical information for the routine
-          "setup": {
-            "description": "Test routine",
-            "baseDirectory": "test1",
-            # These two arguments are optional, and specify subdirectories
-            # in either the source or destination directories
-            "srcSub": "test4",
-            "dstSub": "test5"
-          },
-          # These are the steps in the routine, using the names of the 
-          # base directories you defined in 'locations'
-          "1": "test2",
-          "2": "test3"
-        }
+      "testRoutine": {
+        "src": "/Users/yourUser/test1",
+        "dst":"/Users/yourUser/test2"
       }
     }
+
+`testRoutine` is the name of the routine you want to use, `src` is the folder you want to backup, and `dst` is the place where you want your files to be copied to. AceSafe will compare the contents of `src` with the contents of `dst` and delete anything that isn't in `src` while also copying any files that are only in `src`.
+    
 
 You can either use this file or create your own. If you want to use your own, simply drop it into the directory that AceSafe lives in (ensuring that your file has the same formatting as the test_json file) and then define an environment variable called <code>ACESAFE_JSON</code>. When defining this variable, don't include the <code>.json</code> extension.
 

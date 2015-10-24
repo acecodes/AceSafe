@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# AceSafe
-# By Ace Eddleman, 2014
 
 # Compatability imports that allow usage in Python 2 & 3
 from __future__ import print_function
@@ -9,6 +7,11 @@ import json
 from os import environ
 from sys import argv
 from json_functions import JSONRunner
+
+"""
+AceSafe
+An easy-to-use backup utility by Ace Eddleman.
+"""
 
 try:
     json_file = environ['ACESAFE_JSON']
