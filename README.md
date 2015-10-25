@@ -1,6 +1,6 @@
 # AceSafe
-#### Last updated: 4/24/2015
-##### This update is a complete overhaul that utilizes JSON instead of a SQLite database file. It's much cleaner and simpler, but if you prefer the old version for whatever reason, just look at the <code>sqlite</code> subfolder.
+#### Last updated: October, 2015
+##### This version is a complete overhaul that utilizes JSON instead of a SQLite database file. It's much cleaner and simpler, but if you prefer the old version for whatever reason, just look at the <code>sqlite</code> subfolder.
 This is a program I built out of the carcass of my horrendously unfashionable batch file backup system. The primary purpose of this program is to send files that are valued the most to your various backup sources. First, AceSafe builds some objects that each correspond with a path on the user's hard drive. Then each path is turned into an class object and customized so that their files can be manipulated with copying methods. Once that is done, the program builds a database file that consists of several tables, with each table containing syncing routines.
 
 The most powerful feature of this program is its copying method, which checks the source directory and then compares its contents to the contents of the destination directory. If there are files that exist only in the destination, they will be deleted. Then new and updated files are copied over. This process ensures a 1-to-1 sync between files and their backups, with no extra files lingering on forever because file names or paths have been changed.
