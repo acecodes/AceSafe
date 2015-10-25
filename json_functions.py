@@ -3,7 +3,6 @@ import os
 import filecmp
 import shutil
 import sys
-from time import sleep
 
 plat = sys.platform
 
@@ -67,12 +66,6 @@ class JSONRunner:
                 """rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst))
         else:
             os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
-
-    # Warning before copying
-    def copy_warn(self, dst):
-        print('\n%s files are about to be copied..' % dst)
-        print('Press any key to continue...\n')
-        input()
 
     @staticmethod
     def routine(JSON_Source, routine):
