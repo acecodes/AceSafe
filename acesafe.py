@@ -25,11 +25,17 @@ Command-line arguments
 help_text = """
         Arguments available for AceSafe:
 
-        run - Run a specific routine, i.e. "python acesafe.py run Dropbox"
+        run - Run a specific routine from your JSON file
+        Syntax: 
+        For example: ./acesafe.py run dropbox
+        (Runs a routine called "dropbox" that is defined within your JSON file)
+        
         view-routines - View routines in your JSON file
+        Syntax: ./acesafe.py view-routines
 
         compare - Compare two directories without using a JSON file
         Syntax: compare {source} {destination}
+        Example: ./acesafe.py compare ~/test1 ~/test2
 
         This program runs with a JSON file, which by default is test_json.json.
         If you want a different JSON file to be used, create it, place it in
