@@ -1,0 +1,19 @@
+{
+  "locations": {
+    "test1": "/home/username/tmp/test1",
+    "test2": "/home/username/tmp/test2",
+    "test3": "/home/username/tmp/test3"
+  },
+  "routines": {
+    "test": {
+      "setup": {
+        "description": "Test routine",
+        "baseDirectory": "test1",
+        "srcSub": "test4",
+        "dstSub": "test5"
+      },
+      "1": "test2",
+      "2": "test3"
+    }
+  }
+}
