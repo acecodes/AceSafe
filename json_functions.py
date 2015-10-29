@@ -10,7 +10,11 @@ plat = sys.platform
 class JSONRunner:
 
     @staticmethod
-    def copy_dirs(src, dst, subs=None, src_sub=None, dst_sub=None):
+    def copy_dirs(src, dst,
+                  subs=None,
+                  src_sub=None,
+                  dst_sub=None,
+                  logging=False):
         """
         Searches for and deletes files not found in the source,
         then copies any new files to the destination
@@ -30,6 +34,7 @@ class JSONRunner:
 
             dst_root = os.path.join(dst, os.path.relpath(src_root, src))
             dirs = filecmp.dircmp(src_root, dst_root)
+            log_items = []
 
             # Find old files and delete them from destination
             for item in dirs.right_only:
@@ -44,6 +49,8 @@ class JSONRunner:
                     shutil.rmtree(dst_path)
                 else:
                     os.remove(dst_path)
+                if logging:
+                    log_items.append((item, 'Removed'))
 
             # Find new files and add them to destination
             for item in dirs.left_only:
@@ -58,6 +65,13 @@ class JSONRunner:
                     shutil.copytree(src_path, os.path.join(dst_root, item))
                 else:
                     shutil.copy2(src_path, os.path.join(dst_root, item))
+                if logging:
+                    log_items.append((item, 'Added'))
+
+        if logging:
+            with open('acesafe.log', 'w') as logfile:
+                for item in log_items:
+                    logfile.write(item)
 
         # Once clearing and adding has completed, update existing files
         print('\nUpdating: ')
@@ -88,8 +102,8 @@ class JSONRunner:
             JSONRunner.copy_dirs(src, dst)
 
         except KeyboardInterrupt:
-                    print('\nYou have elected to exit the program, goodbye!\n')
-                    exit()
+            print('\nYou have elected to exit the program, goodbye!\n')
+            exit()
         except KeyError:
             print('That routine does not exist. Please try again.')
         except IOError:
