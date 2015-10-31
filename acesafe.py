@@ -37,6 +37,9 @@ help_text = """
         Syntax: compare {source} {destination}
         Example: ./acesafe.py compare ~/test1 ~/test2
 
+        log - Output a log file.
+        Syntax: Place 'log' anywhere after the run command - ./acesafe.py run 
+
         This program runs with a JSON file, which by default is test_json.json.
         If you want a different JSON file to be used, create it, place it in
         this directory, then set the "json_file" environment variable.
@@ -55,8 +58,11 @@ run_args = argv[2:]
 
 # Collect arguments in case user wants to run more than one
 if argv[1] == 'run':
+    log = False
+    if 'log' in argv:
+        log = True
     for argv[1] in run_args:
-        JSONRunner.routine(json_file, argv[1])
+        JSONRunner.routine(json_file, argv[1], logging=log)
     exit()
 
 if argv[1] == 'view-routines':
@@ -71,5 +77,8 @@ if argv[1] == 'view-routines':
 if argv[1] == 'compare':
     src = argv[2]
     dst = argv[3]
-    JSONRunner.copy_dirs(src, dst)
+    log = False
+    if 'log' in argv:
+        log = True
+    JSONRunner.copy_dirs(src, dst, logging=log)
     exit()
