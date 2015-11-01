@@ -38,7 +38,9 @@ help_text = """
         Example: ./acesafe.py compare ~/test1 ~/test2
 
         log - Output a log file.
-        Syntax: Place 'log' anywhere after the run command - ./acesafe.py run 
+        Syntax: run {routine_1} {routine_n} log
+        Example: ./acesafe.py run test_routine test_routine2 log
+        Note: log MUST be placed as the LAST argument to work correctly!
 
         This program runs with a JSON file, which by default is test_json.json.
         If you want a different JSON file to be used, create it, place it in
@@ -59,10 +61,13 @@ run_args = argv[2:]
 # Collect arguments in case user wants to run more than one
 if argv[1] == 'run':
     log = False
-    if 'log' in argv:
+    if argv[-1] == 'log':
         log = True
     for argv[1] in run_args:
-        JSONRunner.routine(json_file, argv[1], logging=log)
+        if argv[1] == 'log':
+            pass
+        else:
+            JSONRunner.routine(json_file, argv[1], logging=log)
     exit()
 
 if argv[1] == 'view-routines':

@@ -1,5 +1,6 @@
 import json
 import os
+import subprocess
 import filecmp
 import shutil
 import sys
@@ -76,13 +77,17 @@ class JSONRunner:
         # Once clearing and adding has completed, update existing files
         print('\nUpdating: ')
         if plat != 'win32':
-            os.system(
-                """rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst))
+            if logging is True:
+                print('Saving updates to log file...')
+                with open('acesafe.log', 'a') as logfile_update:
+                    subprocess.call("""rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst), shell=True, stdout=logfile_update)
+            else:
+                subprocess.call("""rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst), shell=True, stdout=logfile_update)
         else:
-            os.system("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
+            subprocess.call("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
 
     @staticmethod
-    def routine(JSON_Source, routine):
+    def routine(JSON_Source, routine, logging=False):
         """
         Run a backup routine from a JSON file
         Keep in mind that subdirectories MUST exist ahead of time!
@@ -99,13 +104,13 @@ class JSONRunner:
             src = dir_obj[routine]['src']
             dst = dir_obj[routine]['dst']
 
-            JSONRunner.copy_dirs(src, dst)
+            JSONRunner.copy_dirs(src, dst, logging=logging)
 
         except KeyboardInterrupt:
             print('\nYou have elected to exit the program, goodbye!\n')
             exit()
-        except KeyError:
-            print('That routine does not exist. Please try again.')
+        # except KeyError:
+        #     print('That routine does not exist. Please try again.')
         except IOError:
             print('That JSON file is invalid. Please try again.')
         if len(dir_errors) > 0:
