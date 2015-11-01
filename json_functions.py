@@ -82,7 +82,7 @@ class JSONRunner:
                 with open('acesafe.log', 'a') as logfile_update:
                     subprocess.call("""rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst), shell=True, stdout=logfile_update)
             else:
-                subprocess.call("""rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst), shell=True, stdout=logfile_update)
+                subprocess.call("""rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst), shell=True)
         else:
             subprocess.call("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
 
