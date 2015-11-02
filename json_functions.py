@@ -77,14 +77,22 @@ class JSONRunner:
         # Once clearing and adding has completed, update existing files
         print('\nUpdating: ')
         if plat != 'win32':
-            if logging is True:
+            if logging:
                 print('Saving updates to log file...')
                 with open('acesafe.log', 'a') as logfile_update:
-                    subprocess.call("""rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst), shell=True, stdout=logfile_update)
+                    subprocess.call(
+                        """rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst), shell=True, stdout=logfile_update)
             else:
-                subprocess.call("""rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst), shell=True)
+                subprocess.call(
+                    """rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst), shell=True)
         else:
-            subprocess.call("""xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst))
+            if logging:
+                with open('acesafe.log', 'a') as logfile_update:
+                    subprocess.call(
+                        """xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst), shell=True, stdout=logfile_update)
+            else:
+                subprocess.call(
+                    """xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst), shell=True)
 
     @staticmethod
     def routine(JSON_Source, routine, logging=False):
