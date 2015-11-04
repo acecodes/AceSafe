@@ -1,6 +1,12 @@
 {
   "testRoutine": {
-    "src": "/Users/yourUser/test1",
-    "dst":"/Users/yourUser/test2"
+    "0": {
+      "src": "/Users/yourUser/test1",
+      "dst": "/Users/yourUser/test2"
+    },
+    "1": {
+      "src": "/Users/yourUser/test3",
+      "dst": "/Users/yourUser/test4"
+    }
   }
 }

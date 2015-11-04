@@ -14,13 +14,24 @@ The first step is to open up the <code>test_json.json</code> file. You'll see th
     
     {
       "testRoutine": {
-        "src": "/Users/yourUser/test1",
-        "dst":"/Users/yourUser/test2"
+        "0": {
+          "src": "/Users/yourUser/test1",
+          "dst":"/Users/yourUser/test2"
+        },
+        "1": {
+          "src": "/Users/yourUser/test3",
+          "dst":"/Users/yourUser/test4"
+        }
       }
     }
 
-`testRoutine` is the name of the routine you want to use, `src` is the folder you want to backup, and `dst` is the place where you want your files to be copied to. AceSafe will compare the contents of `src` with the contents of `dst` and delete anything that isn't in `src` while also copying any files that are only in `src`.
-    
+`testRoutine` is the name of the routine you want to use, and `"0"` is the first step within the routine (you can add as many steps as you want as long as the first one is `"0"`). Within each step, `src` is the folder you want to backup, and `dst` is the place where you want your files to be copied to. AceSafe will compare the contents of `src` with the contents of `dst` and delete anything that isn't in `src` while also copying any files that are only in `src`.
+
+To run `testRoutine`, you enter the following command into a shell session:
+
+`$ ./acesafe.py run testRoutine`
+
+This will fire each step sequentially.
 
 You can either use this file or create your own. If you want to use your own, simply drop it into the directory that AceSafe lives in (ensuring that your file has the same formatting as the test_json file) and then define an environment variable called <code>ACESAFE_JSON</code>. When defining this variable, don't include the <code>.json</code> extension.
 

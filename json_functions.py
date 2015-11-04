@@ -109,16 +109,19 @@ class JSONRunner:
             with open(JSON_Source + '.json') as data_file:
                 dir_obj = json.load(data_file)
 
-            src = dir_obj[routine]['src']
-            dst = dir_obj[routine]['dst']
+            routine_obj = dir_obj[routine]
 
-            JSONRunner.copy_dirs(src, dst, logging=logging)
+            for step in range(len(routine_obj)):
+                src = routine_obj[str(step)]['src']
+                dst = routine_obj[str(step)]['dst']
+
+                JSONRunner.copy_dirs(src, dst, logging=logging)
 
         except KeyboardInterrupt:
             print('\nYou have elected to exit the program, goodbye!\n')
             exit()
-        # except KeyError:
-        #     print('That routine does not exist. Please try again.')
+        except KeyError:
+            print('That routine does not exist. Please try again.')
         except IOError:
             print('That JSON file is invalid. Please try again.')
         if len(dir_errors) > 0:
