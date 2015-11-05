@@ -5,8 +5,6 @@ import filecmp
 import shutil
 import sys
 
-plat = sys.platform
-
 
 class JSONRunner:
 
@@ -76,6 +74,8 @@ class JSONRunner:
 
         # Once clearing and adding has completed, update existing files
         print('\nUpdating: ')
+        plat = sys.platform
+
         if plat != 'win32':
             if logging:
                 print('Saving updates to log file...')
