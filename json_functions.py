@@ -128,3 +128,17 @@ class JSONRunner:
             print('\nThese directories experienced errors:')
             for i in dir_errors:
                 print(i)
+
+    @staticmethod
+    def insert_routine(title, src, dst):
+        """
+        Generate JSON for a new routine.
+        ***UNDER CONSTRUCTION***
+        """
+
+        json_s = '{'
+        json_s += '"%s": {"src": "%s", "dst": "%s"}' % (title, src, dst)
+        json_s += '}'
+
+        new_routine_json = json.loads(json_s)
+        return new_routine_json
