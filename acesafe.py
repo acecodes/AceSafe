@@ -7,6 +7,7 @@ import json
 from os import environ
 from sys import argv
 from json_functions import JSONRunner
+from pprint import pprint
 
 """
 AceSafe
@@ -87,3 +88,10 @@ if argv[1] == 'compare':
         log = True
     JSONRunner.copy_dirs(src, dst, logging=log)
     exit()
+
+if argv[1] == 'generate':
+    title = argv[2]
+    src = argv[3]
+    dst = argv[4]
+    print("Here's your JSON:")
+    print(json.loads(JSONRunner.routine_json(title, src, dst)))

@@ -130,15 +130,13 @@ class JSONRunner:
                 print(i)
 
     @staticmethod
-    def insert_routine(title, src, dst):
+    def routine_json(title, src, dst):
         """
         Generate JSON for a new routine.
         ***UNDER CONSTRUCTION***
         """
 
-        json_s = '{'
-        json_s += '"%s": {"src": "%s", "dst": "%s"}' % (title, src, dst)
-        json_s += '}'
+        json_s = {'title': {'0': {src: dst}}}
 
-        new_routine_json = json.loads(json_s)
+        new_routine_json = json.dumps(json_s)
         return new_routine_json
