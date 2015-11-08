@@ -35,7 +35,11 @@ help_text = """
 
         compare - Compare two directories without using a JSON file
         Syntax: compare {source} {destination}
-        Example: ./acesafe.py compare ~/test1 ~/test2
+        Example: ./acesafe.py compare /home/user1/test1 /home/user1/test2
+
+        generate - Generate JSON for a routine (for insertion into your JSON file).
+        Syntax: generate {routine title} {source} {destination}
+        Example: ./acesafe.py generate testRoutine /home/user1/test1 /home/user1/test2
 
         log - Output a log file.
         Syntax: run {routine_1} {routine_n} log
