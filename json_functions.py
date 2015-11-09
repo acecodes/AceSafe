@@ -138,5 +138,7 @@ class JSONRunner:
 
         json_s = {'title': {'0': {src: dst}}}
 
-        new_routine_json = json.dumps(json_s)
+        new_routine_json = json.dumps(
+            json_s, sort_keys=True, indent=4, separators=(',', ': '))
+
         return new_routine_json
