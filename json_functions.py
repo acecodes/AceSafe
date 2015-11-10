@@ -137,7 +137,7 @@ class JSONRunner:
                 print(i)
 
     @staticmethod
-    def routine_json(title, src, dst):
+    def routine_json(title, src, dst, file_name=None):
         """
         Generate JSON for a new routine.
         ***UNDER CONSTRUCTION***
@@ -147,5 +147,11 @@ class JSONRunner:
 
         new_routine_json = json.dumps(
             json_s, sort_keys=True, indent=4, separators=(',', ': '))
+
+        if file_name:
+            with open('{}.json'.format(file_name), 'w') as new_file:
+                new_file.write(new_routine_json)
+            print('Your JSON has been stored in {}.json'.format(file_name))
+            return new_routine_json
 
         return new_routine_json
