@@ -5,8 +5,6 @@ import filecmp
 import shutil
 import sys
 
-plat = sys.platform
-
 
 class JSONRunner:
 
@@ -76,23 +74,31 @@ class JSONRunner:
 
         # Once clearing and adding has completed, update existing files
         print('\nUpdating: ')
+        plat = sys.platform
+
         if plat != 'win32':
             if logging:
                 print('Saving updates to log file...')
                 with open('acesafe.log', 'a') as logfile_update:
                     subprocess.call(
-                        """rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst), shell=True, stdout=logfile_update)
+                        """rsync -r -u -v --links "{0}"/* "{1}" """.format(
+                            src, dst),
+                        shell=True, stdout=logfile_update)
             else:
                 subprocess.call(
-                    """rsync -r -u -v --links "{0}"/* "{1}" """.format(src, dst), shell=True)
+                    """rsync -r -u -v --links "{0}"/* "{1}" """.format(
+                        src, dst),
+                    shell=True)
         else:
             if logging:
                 with open('acesafe.log', 'a') as logfile_update:
                     subprocess.call(
-                        """xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst), shell=True, stdout=logfile_update)
+                        """xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst),
+                        shell=True, stdout=logfile_update)
             else:
                 subprocess.call(
-                    """xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst), shell=True)
+                    """xcopy /I /E /Y /D "{0}" "{1}" """.format(src, dst),
+                    shell=True)
 
     @staticmethod
     def routine(JSON_Source, routine, logging=False):
@@ -112,8 +118,9 @@ class JSONRunner:
             routine_obj = dir_obj[routine]
 
             for step in range(len(routine_obj)):
-                src = routine_obj[str(step)]['src']
-                dst = routine_obj[str(step)]['dst']
+                step = str(step)
+                src = routine_obj[step]['src']
+                dst = routine_obj[step]['dst']
 
                 JSONRunner.copy_dirs(src, dst, logging=logging)
 

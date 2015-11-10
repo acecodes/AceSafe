@@ -26,10 +26,10 @@ help_text = """
         Arguments available for AceSafe:
 
         run - Run a specific routine from your JSON file
-        Syntax: 
+        Syntax:
         For example: ./acesafe.py run dropbox
         (Runs a routine called "dropbox" that is defined within your JSON file)
-        
+
         view-routines - View routines in your JSON file
         Syntax: ./acesafe.py view-routines
 
