@@ -140,7 +140,10 @@ class JSONRunner:
     def routine_json(title, src, dst, file_name=None):
         """
         Generate JSON for a new routine.
-        ***UNDER CONSTRUCTION***
+        @title: The name of your routine
+        @src: The source directory
+        @dst: The destination directory, which will be made identical to source
+        @file_name: The filename (minus .json) you want to use for new JSON
         """
 
         json_s = {'title': {'0': {src: dst}}}
