@@ -96,5 +96,8 @@ if argv[1] == 'generate':
     title = argv[2]
     src = argv[3]
     dst = argv[4]
+
+    file_name = argv[5] or None
+
     print("Here's your JSON:")
-    print(json.loads(JSONRunner.routine_json(title, src, dst)))
+    print(json.loads(JSONRunner.routine_json(title, src, dst, file_name=file_name)))
